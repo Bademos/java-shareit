@@ -44,10 +44,10 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     private int getId() {
-        int lastId = users.values().stream().
-                mapToInt(User::getId).
-                max().
-                orElse(0);
+        int lastId = users.values()
+                .stream()
+                .mapToInt(User::getId)
+                .max().orElse(0);
         return lastId + 1;
     }
 }

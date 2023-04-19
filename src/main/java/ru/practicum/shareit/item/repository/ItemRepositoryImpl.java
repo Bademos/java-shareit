@@ -54,10 +54,11 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     private int getId() {
-        int lastId = items.values().stream().
-                mapToInt(Item::getId).
-                max().
-                orElse(0);
+        int lastId = items.values()
+                .stream()
+                .mapToInt(Item::getId)
+                .max()
+                .orElse(0);
         return lastId + 1;
     }
 
