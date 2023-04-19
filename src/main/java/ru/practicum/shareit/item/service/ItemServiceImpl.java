@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.dto.ItemDtoMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -14,8 +13,7 @@ import ru.practicum.shareit.user.repository.UserRepositoryImpl;
 import java.util.List;
 
 @Service
-public class ItemServiceImpl implements ItemService{
-
+public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
@@ -78,8 +76,8 @@ public class ItemServiceImpl implements ItemService{
         userRepository.findById(userId);
     }
 
-    private void  checkUserOwner(int id, int userId) {
-        if(id!=userId) {
+    private void checkUserOwner(int id, int userId) {
+        if (id != userId) {
             throw new NotFoundException("The User has no the item");
         }
     }
