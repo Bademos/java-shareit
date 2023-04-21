@@ -16,6 +16,4 @@ public interface ItemRepository {
     public List<Item> getAll();
 
     public List<Item> getAllByUser(int id);
-
-    public List<Item> search(String text);
 }

@@ -17,8 +17,5 @@ public interface ItemService {
 
     public Item getById(int id);
 
-    Item updateItem(int id, Item makeItemFromDto);
-
     public List<Item> search(String text);
-
 }

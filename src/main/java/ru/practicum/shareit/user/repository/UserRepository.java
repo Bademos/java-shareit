@@ -16,4 +16,6 @@ public interface UserRepository {
     public List<User> getAll();
 
     public void removeUser(int id);
+
+    public boolean containEmail(String email);
 }

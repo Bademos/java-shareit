@@ -4,24 +4,24 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Integer, User> users = new HashMap<>();
+    private final Set<String> email = new HashSet<>();
 
     @Override
     public User add(User user) {
         users.put(user.getId(), user);
+        email.add(user.getEmail());
         return user;
     }
 
     @Override
     public User update(User user) {
         users.put(user.getId(), user);
+        email.add(user.getEmail());
         return user;
     }
 
@@ -43,11 +43,10 @@ public class UserRepositoryImpl implements UserRepository {
         users.remove(id);
     }
 
-    private int getId() {
-        int lastId = users.values()
-                .stream()
-                .mapToInt(User::getId)
-                .max().orElse(0);
-        return lastId + 1;
+    @Override
+    public boolean containEmail(String ml) {
+        return email.contains(ml);
     }
+
+
 }

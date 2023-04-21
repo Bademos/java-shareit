@@ -65,10 +65,10 @@ public class ItemController {
 
     @GetMapping("/search")
     public List<ItemDto> searchByRequest(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-                                         @RequestParam(defaultValue = "") String text) {
+                                         @RequestParam String text) {
 
         log.info("Got request from user with id: {} to search items contains the text: {}", userId, text);
-        if (text.isEmpty()) {
+        if (text.isBlank()) {
             return new ArrayList<>();
         }
         return service.search(text).stream().map(ItemDtoMapper::makeItemDto).collect(Collectors.toList());

@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
-    private static int id = 0;
+    private int id = 0;
 
     @Autowired
     public UserServiceImpl(UserRepositoryImpl repository) {
@@ -39,15 +39,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        System.out.println(user);
         if (user.getEmail() != null
                 && !user.getEmail().isEmpty() && !user.getEmail().equals(repository.findById(user.getId()).getEmail())) {
             emailCheck(user.getEmail());
         }
         User oldUser = repository.findById(user.getId());
-        System.out.println(oldUser);
         User oldUpd = UserDtoMapper.update(oldUser, user);
-        System.out.println(oldUpd);
         return repository.update(oldUpd);
     }
 

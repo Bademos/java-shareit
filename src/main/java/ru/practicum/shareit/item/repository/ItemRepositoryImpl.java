@@ -14,7 +14,6 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Item add(Item item) {
-        item.setId(getId());
         items.put(item.getId(), item);
         containUserHandler(item);
         itemsByUser.get(item.getOwnerId()).put(item.getId(), item);
@@ -53,30 +52,9 @@ public class ItemRepositoryImpl implements ItemRepository {
         return new ArrayList<>(itemsByUser.get(id).values());
     }
 
-    private int getId() {
-        int lastId = items.values()
-                .stream()
-                .mapToInt(Item::getId)
-                .max()
-                .orElse(0);
-        return lastId + 1;
-    }
-
     private void containUserHandler(Item item) {
         if (!itemsByUser.containsKey(item.getOwnerId())) {
             itemsByUser.put(item.getOwnerId(), new HashMap<>());
         }
-    }
-
-    @Override
-    public List<Item> search(String text) {
-        final var russianLocal = new Locale("ru");
-        final var tempText = text.toLowerCase(russianLocal);
-        return items.values()
-                .stream()
-                .filter(Item::getAvailable)
-                .filter(item -> item.getDescription().toLowerCase(russianLocal).contains(tempText)
-                        || item.getName().toLowerCase(russianLocal).contains(tempText))
-                .collect(Collectors.toList());
     }
 }
