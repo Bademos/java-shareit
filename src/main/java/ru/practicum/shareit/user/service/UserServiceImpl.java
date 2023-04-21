@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DoubleEntityException;
-import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.repository.UserRepositoryImpl;

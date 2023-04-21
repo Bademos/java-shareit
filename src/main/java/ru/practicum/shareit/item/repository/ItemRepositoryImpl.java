@@ -26,7 +26,7 @@ public class ItemRepositoryImpl implements ItemRepository {
         containUserHandler(item);
         Item oldItem = itemsByUserInList.get(item.getOwnerId())
                 .stream()
-                .filter(it->it.getId()==item.getId())
+                .filter(it -> it.getId() == item.getId())
                 .collect(Collectors.toList())
                 .get(0);
         itemsByUserInList.get(item.getOwnerId()).remove(oldItem);
@@ -60,7 +60,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     private void containUserHandler(Item item) {
         if (!itemsByUserInList.containsKey(item.getOwnerId())) {
-            itemsByUserInList.put(item.getOwnerId(),new ArrayList<>());
+            itemsByUserInList.put(item.getOwnerId(), new ArrayList<>());
         }
     }
 }
