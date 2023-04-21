@@ -5,17 +5,18 @@ import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class ItemRepositoryImpl implements ItemRepository {
     private final Map<Integer, Item> items = new HashMap<>();
-    private final Map<Integer, Map<Integer, Item>> itemsByUser = new HashMap<>();
+    private final Map<Integer, List<Item>> itemsByUserInList = new HashMap<>();
 
     @Override
     public Item add(Item item) {
         items.put(item.getId(), item);
         containUserHandler(item);
-        itemsByUser.get(item.getOwnerId()).put(item.getId(), item);
+        itemsByUserInList.get(item.getOwnerId()).add(item);
         return item;
     }
 
@@ -23,7 +24,13 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item update(Item item) {
         items.put(item.getId(), item);
         containUserHandler(item);
-        itemsByUser.get(item.getOwnerId()).put(item.getId(), item);
+        Item oldItem = itemsByUserInList.get(item.getOwnerId())
+                .stream()
+                .filter(it->it.getId()==item.getId())
+                .collect(Collectors.toList())
+                .get(0);
+        itemsByUserInList.get(item.getOwnerId()).remove(oldItem);
+        itemsByUserInList.get(item.getOwnerId()).add(item);
         return item;
     }
 
@@ -48,12 +55,12 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public List<Item> getAllByUser(int id) {
-        return new ArrayList<>(itemsByUser.get(id).values());
+        return itemsByUserInList.get(id);
     }
 
     private void containUserHandler(Item item) {
-        if (!itemsByUser.containsKey(item.getOwnerId())) {
-            itemsByUser.put(item.getOwnerId(), new HashMap<>());
+        if (!itemsByUserInList.containsKey(item.getOwnerId())) {
+            itemsByUserInList.put(item.getOwnerId(),new ArrayList<>());
         }
     }
 }

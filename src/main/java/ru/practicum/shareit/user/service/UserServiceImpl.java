@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
             emailCheck(user.getEmail());
         }
         User oldUser = repository.findById(user.getId());
-        User oldUpd = UserDtoMapper.update(oldUser, user);
+        User oldUpd = updateSrv(oldUser, user);
         return repository.update(oldUpd);
     }
 
@@ -63,5 +63,17 @@ public class UserServiceImpl implements UserService {
     private int generateId() {
         id += 1;
         return id;
+    }
+
+    public User updateSrv(User oldUser, User newUser) {
+        var tempUser = oldUser.toBuilder();
+        if (newUser.getName() != null && !newUser.getName().isEmpty()) {
+            tempUser.name(newUser.getName());
+        }
+        if (newUser.getEmail() != null
+                && !newUser.getEmail().isEmpty()) {
+            tempUser.email(newUser.getEmail());
+        }
+        return tempUser.build();
     }
 }

@@ -21,16 +21,4 @@ public class UserDtoMapper {
                 .email(userDto.getEmail())
                 .build();
     }
-
-    public static User update(User oldUser, User newUser) {
-        var tempUser = oldUser.toBuilder();
-        if (newUser.getName() != null && !newUser.getName().isEmpty()) {
-            tempUser.name(newUser.getName());
-        }
-        if (newUser.getEmail() != null
-                && !newUser.getEmail().isEmpty()) {
-            tempUser.email(newUser.getEmail());
-        }
-        return tempUser.build();
-    }
 }

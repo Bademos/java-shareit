@@ -14,4 +14,6 @@ public class Booking {
     private int itemId;
     private LocalDateTime startBooking;
     private LocalDateTime endBooking;
+    private BookingStatus status;
+    private String statusDescription;
 }

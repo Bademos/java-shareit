@@ -52,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
     public Item update(int id, Item item) {
         var oldItem = itemRepository.findById(id);
         checkUserOwner(oldItem.getOwnerId(), item.getOwnerId());
-        oldItem = ItemDtoMapper.update(oldItem, item);
+        oldItem = updateSrv(oldItem, item);
         itemRepository.update(oldItem);
         return oldItem;
     }
@@ -87,5 +87,31 @@ public class ItemServiceImpl implements ItemService {
     private int generateId() {
         id += 1;
         return id;
+    }
+
+    public Item updateSrv(Item oldItem, Item newItem) {
+        Item itemUpd = Item.builder()
+                .id(oldItem.getId())
+                .name(oldItem.getName())
+                .description(oldItem.getDescription())
+                .ownerId(oldItem.getOwnerId())
+                .available(oldItem.getAvailable())
+                .build();
+        var tempItem = oldItem.toBuilder();
+
+        if (newItem.getName() != null && !newItem.getName().isEmpty()) {
+            itemUpd.setName(newItem.getName());
+            tempItem.name(newItem.getName());
+        }
+        if (newItem.getDescription() != null
+                && !newItem.getDescription().isEmpty()) {
+            itemUpd.setDescription(newItem.getDescription());
+            tempItem.description(newItem.getDescription());
+        }
+        if (newItem.getAvailable() != null) {
+            itemUpd.setAvailable(newItem.getAvailable());
+            tempItem.available(newItem.getAvailable());
+        }
+        return tempItem.build();
     }
 }
