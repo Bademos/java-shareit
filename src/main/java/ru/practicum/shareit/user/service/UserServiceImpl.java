@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void emailCheck(String email) {
-        boolean isCheck = repository.getAll().stream().anyMatch(user -> user.getEmail().equals(email));
+        boolean isCheck = repository.getListOfEmail().stream().anyMatch(mail -> mail.equals(email));
         if (isCheck) {
             throw new DoubleEntityException("Incorrect email address");
         }

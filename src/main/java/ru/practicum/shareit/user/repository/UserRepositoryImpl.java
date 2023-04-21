@@ -9,19 +9,21 @@ import java.util.*;
 @Component
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Integer, User> users = new HashMap<>();
-    private final Set<String> email = new HashSet<>();
+    private final Set<String> emails = new HashSet<>();
 
     @Override
     public User add(User user) {
         users.put(user.getId(), user);
-        email.add(user.getEmail());
+        emails.add(user.getEmail());
         return user;
     }
 
     @Override
     public User update(User user) {
+        User oldUser = findById(user.getId());
+        emails.remove(oldUser.getEmail());
+        emails.add(user.getEmail());
         users.put(user.getId(), user);
-        email.add(user.getEmail());
         return user;
     }
 
@@ -40,13 +42,18 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void removeUser(int id) {
+        User oldUser = findById(id);
+        emails.remove(oldUser.getEmail());
         users.remove(id);
     }
 
     @Override
     public boolean containEmail(String ml) {
-        return email.contains(ml);
+        return emails.contains(ml);
     }
 
-
+    @Override
+    public Set<String> getListOfEmail() {
+        return emails;
+    }
 }
