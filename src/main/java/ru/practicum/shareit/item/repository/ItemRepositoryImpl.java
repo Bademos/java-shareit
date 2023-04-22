@@ -26,7 +26,7 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item update(Item item) {
         items.put(item.getId(), item);
         containUserHandler(item);
-        List<Item> items =itemsByUserInList.get(item.getOwner().getId());
+        List<Item> items = itemsByUserInList.get(item.getOwner().getId());
         Item oldItem = items
                 .stream()
                 .filter(it -> it.getId() == item.getId())
@@ -71,5 +71,4 @@ public class ItemRepositoryImpl implements ItemRepository {
         id += 1;
         return id;
     }
-
 }

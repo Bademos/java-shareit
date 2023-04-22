@@ -18,11 +18,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal=true, level= AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class ItemServiceImpl implements ItemService {
-     ItemRepository itemRepository;
-     UserRepository userRepository;
-     Locale RUSSIAN_LOCAL = new Locale("ru");
+    ItemRepository itemRepository;
+    UserRepository userRepository;
+    Locale RUSSIANLOCAL = new Locale("ru");
 
     @Autowired
     public ItemServiceImpl(ItemRepositoryImpl itemRepository, UserRepositoryImpl userRepository) {
@@ -62,12 +62,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> search(String text) {
-        final var tempText = text.toLowerCase(RUSSIAN_LOCAL);
+        final var tempText = text.toLowerCase(RUSSIANLOCAL);
         return itemRepository.getAll()
                 .stream()
                 .filter(Item::getAvailable)
-                .filter(item -> item.getDescription().toLowerCase(RUSSIAN_LOCAL).contains(tempText)
-                        || item.getName().toLowerCase(RUSSIAN_LOCAL).contains(tempText))
+                .filter(item -> item.getDescription().toLowerCase(RUSSIANLOCAL).contains(tempText)
+                        || item.getName().toLowerCase(RUSSIANLOCAL).contains(tempText))
                 .collect(Collectors.toList());
     }
 
