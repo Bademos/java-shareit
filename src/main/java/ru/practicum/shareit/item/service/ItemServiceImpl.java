@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class ItemServiceImpl implements ItemService {
     ItemRepository itemRepository;
     UserRepository userRepository;
-    Locale RUSSIANLOCAL = new Locale("ru");
+    Locale russianLocal = new Locale("ru");
 
     @Autowired
     public ItemServiceImpl(ItemRepositoryImpl itemRepository, UserRepositoryImpl userRepository) {
@@ -62,12 +62,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> search(String text) {
-        final var tempText = text.toLowerCase(RUSSIANLOCAL);
+        final var tempText = text.toLowerCase(russianLocal);
         return itemRepository.getAll()
                 .stream()
                 .filter(Item::getAvailable)
-                .filter(item -> item.getDescription().toLowerCase(RUSSIANLOCAL).contains(tempText)
-                        || item.getName().toLowerCase(RUSSIANLOCAL).contains(tempText))
+                .filter(item -> item.getDescription().toLowerCase(russianLocal).contains(tempText)
+                        || item.getName().toLowerCase(russianLocal).contains(tempText))
                 .collect(Collectors.toList());
     }
 
