@@ -10,9 +10,11 @@ import java.util.*;
 public class UserRepositoryImpl implements UserRepository {
     private final Map<Integer, User> users = new HashMap<>();
     private final Set<String> emails = new HashSet<>();
+    private int id = 0;
 
     @Override
     public User add(User user) {
+        user.setId(generateId());
         users.put(user.getId(), user);
         emails.add(user.getEmail());
         return user;
@@ -55,5 +57,10 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public Set<String> getListOfEmail() {
         return emails;
+    }
+
+    private int generateId() {
+        id += 1;
+        return id;
     }
 }

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -25,7 +26,7 @@ public class Item {
     @NotBlank
     private String description;
     @NotNull
-    private int ownerId;
+    private User owner;
     @NotNull
     private Boolean available;
 }

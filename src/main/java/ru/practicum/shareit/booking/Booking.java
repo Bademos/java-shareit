@@ -1,6 +1,8 @@
 package ru.practicum.shareit.booking;
 
 import lombok.Data;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
@@ -10,10 +12,9 @@ import java.time.LocalDateTime;
 @Data
 public class Booking {
     private int id;
-    private int userId;
-    private int itemId;
+    private User user;
+    private Item item;
     private LocalDateTime startBooking;
     private LocalDateTime endBooking;
     private BookingStatus status;
-    private String statusDescription;
 }

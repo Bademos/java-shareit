@@ -11,12 +11,14 @@ import java.util.stream.Collectors;
 public class ItemRepositoryImpl implements ItemRepository {
     private final Map<Integer, Item> items = new HashMap<>();
     private final Map<Integer, List<Item>> itemsByUserInList = new HashMap<>();
+    private int id = 0;
 
     @Override
     public Item add(Item item) {
+        item.setId(generateId());
         items.put(item.getId(), item);
         containUserHandler(item);
-        itemsByUserInList.get(item.getOwnerId()).add(item);
+        itemsByUserInList.get(item.getOwner().getId()).add(item);
         return item;
     }
 
@@ -24,13 +26,14 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item update(Item item) {
         items.put(item.getId(), item);
         containUserHandler(item);
-        Item oldItem = itemsByUserInList.get(item.getOwnerId())
+        List<Item> items =itemsByUserInList.get(item.getOwner().getId());
+        Item oldItem = items
                 .stream()
                 .filter(it -> it.getId() == item.getId())
                 .collect(Collectors.toList())
                 .get(0);
-        itemsByUserInList.get(item.getOwnerId()).remove(oldItem);
-        itemsByUserInList.get(item.getOwnerId()).add(item);
+        items.remove(oldItem);
+        items.add(item);
         return item;
     }
 
@@ -59,8 +62,14 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     private void containUserHandler(Item item) {
-        if (!itemsByUserInList.containsKey(item.getOwnerId())) {
-            itemsByUserInList.put(item.getOwnerId(), new ArrayList<>());
+        if (!itemsByUserInList.containsKey(item.getOwner().getId())) {
+            itemsByUserInList.put(item.getOwner().getId(), new ArrayList<>());
         }
     }
+
+    private int generateId() {
+        id += 1;
+        return id;
+    }
+
 }

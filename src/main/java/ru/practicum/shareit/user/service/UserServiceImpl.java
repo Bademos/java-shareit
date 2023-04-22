@@ -12,7 +12,6 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository repository;
-    private int id = 0;
 
     @Autowired
     public UserServiceImpl(UserRepositoryImpl repository) {
@@ -32,7 +31,6 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         emailCheck(user.getEmail());
-        user.setId(generateId());
         return repository.add(user);
     }
 
@@ -53,15 +51,9 @@ public class UserServiceImpl implements UserService {
     }
 
     private void emailCheck(String email) {
-        boolean isCheck = repository.getListOfEmail().stream().anyMatch(mail -> mail.equals(email));
-        if (isCheck) {
+        if (repository.containEmail(email)) {
             throw new DoubleEntityException("Incorrect email address");
         }
-    }
-
-    private int generateId() {
-        id += 1;
-        return id;
     }
 
     public User updateSrv(User oldUser, User newUser) {

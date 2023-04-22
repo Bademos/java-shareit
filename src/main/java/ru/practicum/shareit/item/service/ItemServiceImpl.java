@@ -1,5 +1,8 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -14,10 +17,12 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(makeFinal=true, level= AccessLevel.PRIVATE)
 public class ItemServiceImpl implements ItemService {
-    private final ItemRepository itemRepository;
-    private final UserRepository userRepository;
-    private int id = 0;
+     ItemRepository itemRepository;
+     UserRepository userRepository;
+     Locale RUSSIAN_LOCAL = new Locale("ru");
 
     @Autowired
     public ItemServiceImpl(ItemRepositoryImpl itemRepository, UserRepositoryImpl userRepository) {
@@ -42,15 +47,14 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item create(Item item) {
-        userRepository.findById(item.getOwnerId());
-        item.setId(generateId());
+        userRepository.findById(item.getOwner().getId());
         return itemRepository.add(item);
     }
 
     @Override
     public Item update(int id, Item item) {
         var oldItem = itemRepository.findById(id);
-        checkUserOwner(oldItem.getOwnerId(), item.getOwnerId());
+        checkUserOwner(oldItem.getOwner().getId(), item.getOwner().getId());
         oldItem = updateSrv(oldItem, item);
         itemRepository.update(oldItem);
         return oldItem;
@@ -58,13 +62,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> search(String text) {
-        final var russianLocal = new Locale("ru");
-        final var tempText = text.toLowerCase(russianLocal);
+        final var tempText = text.toLowerCase(RUSSIAN_LOCAL);
         return itemRepository.getAll()
                 .stream()
                 .filter(Item::getAvailable)
-                .filter(item -> item.getDescription().toLowerCase(russianLocal).contains(tempText)
-                        || item.getName().toLowerCase(russianLocal).contains(tempText))
+                .filter(item -> item.getDescription().toLowerCase(RUSSIAN_LOCAL).contains(tempText)
+                        || item.getName().toLowerCase(RUSSIAN_LOCAL).contains(tempText))
                 .collect(Collectors.toList());
     }
 
@@ -83,27 +86,22 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private int generateId() {
-        id += 1;
-        return id;
-    }
 
     public Item updateSrv(Item oldItem, Item newItem) {
         Item itemUpd = Item.builder()
                 .id(oldItem.getId())
                 .name(oldItem.getName())
                 .description(oldItem.getDescription())
-                .ownerId(oldItem.getOwnerId())
+                .owner(oldItem.getOwner())
                 .available(oldItem.getAvailable())
                 .build();
         var tempItem = oldItem.toBuilder();
 
-        if (newItem.getName() != null && !newItem.getName().isEmpty()) {
+        if (newItem.getName() != null) {
             itemUpd.setName(newItem.getName());
             tempItem.name(newItem.getName());
         }
-        if (newItem.getDescription() != null
-                && !newItem.getDescription().isEmpty()) {
+        if (newItem.getDescription() != null) {
             itemUpd.setDescription(newItem.getDescription());
             tempItem.description(newItem.getDescription());
         }

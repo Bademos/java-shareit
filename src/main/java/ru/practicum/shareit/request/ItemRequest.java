@@ -1,6 +1,8 @@
 package ru.practicum.shareit.request;
 
 import lombok.Data;
+import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.user.model.User;
 
 /**
  * TODO Sprint add-item-requests.
@@ -8,6 +10,6 @@ import lombok.Data;
 @Data
 public class ItemRequest {
     private int id;
-    private int userId;
-    private int itemId;
+    private User user;
+    private Item item;
 }

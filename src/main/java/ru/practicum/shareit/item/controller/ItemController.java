@@ -7,6 +7,9 @@ import ru.practicum.shareit.item.dto.ItemDtoMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -22,9 +25,11 @@ import java.util.stream.Collectors;
 public class ItemController {
 
     private final ItemService service;
+    private final UserService serviceUsr;
 
-    public ItemController(ItemServiceImpl service) {
+    public ItemController(ItemServiceImpl service, UserServiceImpl serviceUsr) {
         this.service = service;
+        this.serviceUsr = serviceUsr;
     }
 
     @GetMapping
@@ -43,7 +48,8 @@ public class ItemController {
     public ItemDto createItem(@Valid @RequestBody ItemDto itemDto,
                               @RequestHeader(name = "X-Sharer-User-Id") int userId) {
         log.info("Got request from user with id {} to create item", userId);
-        Item item = ItemDtoMapper.makeItemFromDto(itemDto, userId);
+        User user = serviceUsr.getById(userId);
+        Item item = ItemDtoMapper.makeItemFromDto(itemDto, user);
         Item itemCreated = service.create(item);
         return ItemDtoMapper.makeItemDto(itemCreated);
     }
@@ -52,7 +58,8 @@ public class ItemController {
     public ItemDto update(@RequestHeader(name = "X-Sharer-User-Id") int userId,
                           @PathVariable int id, @RequestBody ItemDto itemDto) {
         log.info("Got request from user with id:{} to update item with id:{}", userId, id);
-        Item item = ItemDtoMapper.makeItemFromDto(itemDto, userId);
+        User user = serviceUsr.getById(userId);
+        Item item = ItemDtoMapper.makeItemFromDto(itemDto, user);
         return ItemDtoMapper.makeItemDto(service.update(id, item));
     }
 
