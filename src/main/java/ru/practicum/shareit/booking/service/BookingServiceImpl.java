@@ -111,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
                 res = bookingRepository.findAllByUserIdAndEndBookingAfterOrderByStartBookingDesc(userId, LocalDateTime.now());
                 break;
             case CURRENT:
-                res = bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingAsc(userId, LocalDateTime.now(), LocalDateTime.now());
+                res = bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(userId, LocalDateTime.now(), LocalDateTime.now());
                 break;
             default:
                 throw new IllegalStateException("Unknown state: " + state);
