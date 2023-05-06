@@ -3,55 +3,58 @@ package ru.practicum.shareit.user.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.DoubleEntityException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.repository.UserRepository;
-import ru.practicum.shareit.user.repository.UserRepositoryImpl;
+import ru.practicum.shareit.user.repository.UserRepositoryDb;
 
 import java.util.List;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository repository;
+    private final UserRepositoryDb repository;
 
     @Autowired
-    public UserServiceImpl(UserRepositoryImpl repository) {
+    public UserServiceImpl(UserRepositoryDb repository) {
         this.repository = repository;
     }
 
     @Override
     public List<User> getAll() {
-        return repository.getAll();
+        return repository.findAll();
     }
 
     @Override
     public void removeUser(int id) {
-        repository.removeUser(id);
+        repository.delete(getById(id));
     }
 
     @Override
     public User create(User user) {
-        emailCheck(user.getEmail());
-        return repository.add(user);
+        return repository.save(user);
     }
 
     @Override
     public User update(User user) {
         if (user.getEmail() != null
-                && !user.getEmail().isEmpty() && !user.getEmail().equals(repository.findById(user.getId()).getEmail())) {
+                && !user.getEmail().isEmpty() && !user.getEmail().equals(repository.findById(user.getId()).orElseThrow().getEmail())) {
             emailCheck(user.getEmail());
         }
-        User oldUser = repository.findById(user.getId());
+        User oldUser = repository.findById(user.getId()).orElseThrow();
         User oldUpd = updateSrv(oldUser, user);
-        return repository.update(oldUpd);
+        return repository.save(oldUpd);
     }
 
     @Override
     public User getById(int id) {
-        return repository.findById(id);
+        if (repository.findById(id).isPresent()) {
+            return repository.findById(id).orElseThrow();
+        } else {
+            throw new NotFoundException("User with id" + id + "is not found");
+        }
     }
 
     private void emailCheck(String email) {
-        if (repository.containEmail(email)) {
+        if (repository.findByEmail(email).isPresent()) {
             throw new DoubleEntityException("Incorrect email address");
         }
     }

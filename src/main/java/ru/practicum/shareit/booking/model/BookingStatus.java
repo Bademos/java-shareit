@@ -1,9 +1,11 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.model;
 
 public enum BookingStatus {
-APPROVED,
-REQUESTED,
-CANCELED;
+    APPROVED,
+    REJECTED,
+    REQUESTED,
+    WAITING,
+    CANCELED;
 
 public String description(BookingStatus status) {
     switch (status) {
@@ -17,5 +19,4 @@ public String description(BookingStatus status) {
             return "Uncertain status.";
     }
 }
-
 }
