@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ItemRepositoryDb extends JpaRepository<Item, Integer> {
 
-    List<Item> findAllByOwner(User Owner);
+    List<Item> findAllByOwner(User owner);
 
 }
