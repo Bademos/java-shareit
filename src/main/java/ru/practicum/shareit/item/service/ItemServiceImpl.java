@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoForItem;
 import ru.practicum.shareit.booking.model.Booking;
@@ -117,8 +118,8 @@ public class ItemServiceImpl implements ItemService {
 
     private ItemDto getWithBooking(ItemDto item) {
         List<Booking> lastBookings = bookingRepository
-                .findAllByItemIdAndStatusAndStartBookingBeforeOrderByStartBookingDesc(item.getId(),
-                        BookingStatus.APPROVED, LocalDateTime.now());
+                .findAllByItemIdAndStatusAndStartBookingBefore(item.getId(),
+                        BookingStatus.APPROVED, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
         System.out.println(lastBookings);
         if (!lastBookings.isEmpty()) {
             BookingDtoForItem last = BookingDtoForItem.builder().id(lastBookings.get(0).getId())
@@ -127,8 +128,8 @@ public class ItemServiceImpl implements ItemService {
             System.out.println(last);
         }
         List<Booking> nextBookings = bookingRepository
-                .findAllByItemIdAndStatusAndStartBookingAfterOrderByStartBookingAsc(item.getId(),
-                        BookingStatus.APPROVED, LocalDateTime.now());
+                .findAllByItemIdAndStatusAndStartBookingAfter(item.getId(),
+                        BookingStatus.APPROVED, LocalDateTime.now(), Sort.by(Sort.Direction.ASC, "startBooking"));
         System.out.println(nextBookings);
         if (!nextBookings.isEmpty()) {
             BookingDtoForItem next = BookingDtoForItem.builder().id(nextBookings.get(0).getId())

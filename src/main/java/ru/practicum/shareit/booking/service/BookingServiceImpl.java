@@ -4,6 +4,7 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.Booking;
@@ -60,8 +61,10 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoOut createBooking(BookingDto bookingDto, int userId) {
+        bookingDto.setStatus(BookingStatus.WAITING);
         Item item = getItemByIdWithCheck(bookingDto.getItemId());
         User user = getUserByIdWithCheck(userId);
+        bookingDto.setUser(user);
         checkTimeInterval(bookingDto);
 
         if (item.getOwner().getId() == userId) {
@@ -96,22 +99,22 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> res;
         switch (state) {
             case ALL:
-                res = bookingRepository.findAllByUserIdOrderByStartBookingDesc(userId);
+                res = bookingRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "startBooking"));
                 break;
             case WAITING:
-                res = bookingRepository.findAllByUserIdAndStatusOrderByStartBookingDesc(userId, BookingStatus.WAITING);
+                res = bookingRepository.findAllByUserIdAndStatus(userId, BookingStatus.WAITING, Sort.by(Sort.Direction.DESC, "startBooking"));
                 break;
             case REJECTED:
-                res = bookingRepository.findAllByUserIdAndStatusOrderByStartBookingDesc(userId, BookingStatus.REJECTED);
+                res = bookingRepository.findAllByUserIdAndStatus(userId, BookingStatus.REJECTED, Sort.by(Sort.Direction.DESC, "startBooking"));
                 break;
             case PAST:
-                res = bookingRepository.findAllByUserIdAndEndBookingBeforeOrderByStartBookingDesc(userId, LocalDateTime.now());
+                res = bookingRepository.findAllByUserIdAndEndBookingBefore(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
                 break;
             case FUTURE:
-                res = bookingRepository.findAllByUserIdAndEndBookingAfterOrderByStartBookingDesc(userId, LocalDateTime.now());
+                res = bookingRepository.findAllByUserIdAndEndBookingAfter(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
                 break;
             case CURRENT:
-                res = bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(userId, LocalDateTime.now(), LocalDateTime.now());
+                res = bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(userId, LocalDateTime.now(), LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
                 break;
             default:
                 throw new IllegalStateException("Unknown state: " + state);
@@ -129,22 +132,22 @@ public class BookingServiceImpl implements BookingService {
                     .stream().map(Item::getId).collect(Collectors.toList());
             switch (state) {
                 case ALL:
-                    res = bookingRepository.findAllByItemIdInOrderByStartBookingDesc(itemsId);
+                    res = bookingRepository.findAllByItemIdIn(itemsId, Sort.by(Sort.Direction.DESC, "startBooking"));
                     break;
                 case WAITING:
-                    res = bookingRepository.findAllByItemIdInAndStatusOrderByStartBookingDesc(itemsId, BookingStatus.WAITING);
+                    res = bookingRepository.findAllByItemIdInAndStatus(itemsId, BookingStatus.WAITING, Sort.by(Sort.Direction.DESC, "startBooking"));
                     break;
                 case REJECTED:
-                    res = bookingRepository.findAllByItemIdInAndStatusOrderByStartBookingDesc(itemsId, BookingStatus.REJECTED);
+                    res = bookingRepository.findAllByItemIdInAndStatus(itemsId, BookingStatus.REJECTED, Sort.by(Sort.Direction.DESC, "startBooking"));
                     break;
                 case PAST:
-                    res = bookingRepository.findAllByItemIdInAndEndBookingBeforeOrderByStartBookingDesc(itemsId, LocalDateTime.now());
+                    res = bookingRepository.findAllByItemIdInAndEndBookingBefore(itemsId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
                     break;
                 case FUTURE:
-                    res = bookingRepository.findAllByItemIdInAndEndBookingAfterOrderByStartBookingDesc(itemsId, LocalDateTime.now());
+                    res = bookingRepository.findAllByItemIdInAndEndBookingAfter(itemsId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
                     break;
                 case CURRENT:
-                    res = bookingRepository.findAllByItemIdInAndStartBookingBeforeAndEndBookingAfterOrderByStartBookingDesc(itemsId, LocalDateTime.now(), LocalDateTime.now());
+                    res = bookingRepository.findAllByItemIdInAndStartBookingBeforeAndEndBookingAfter(itemsId, LocalDateTime.now(), LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
                     break;
                 default:
                     throw new IllegalStateException("Unknown state: " + state);
@@ -163,7 +166,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public Item getItemByIdWithCheck(int itemId) {
+    private Item getItemByIdWithCheck(int itemId) {
         if (itemRepository.findById(itemId).isPresent()) {
             return itemRepository.findById(itemId).get();
         } else {
@@ -171,7 +174,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public User getUserByIdWithCheck(int userId) {
+    private User getUserByIdWithCheck(int userId) {
         if (userRepository.findById(userId).isPresent()) {
             return userRepository.findById(userId).get();
         } else {
@@ -179,7 +182,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public void checkTimeInterval(BookingDto bookingDto) {
+    private void checkTimeInterval(BookingDto bookingDto) {
         LocalDateTime start = bookingDto.getStart();
         LocalDateTime end = bookingDto.getEnd();
         if (start.isAfter(end) || start.isEqual(end)) {
@@ -187,7 +190,7 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public void checkBookingByUser(Booking booking, int userId) {
+    private void checkBookingByUser(Booking booking, int userId) {
         if (booking.getUser().getId() != userId && booking.getItem().getOwner().getId() != userId) {
             throw new NotFoundException("The booking not linked with user " + userId);
         }

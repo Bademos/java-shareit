@@ -21,19 +21,18 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "bookings", schema = "public")
 public class Booking {
-    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(nullable = false, name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @NotNull
     @ManyToOne
-    @JoinColumn(nullable = false, name = "item_id")
+    @JoinColumn(name = "item_id")
     private Item item;
 
     @NotNull

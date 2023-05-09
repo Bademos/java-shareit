@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking;
 
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -18,24 +20,23 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(path = "/bookings")
-
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingController {
-    private final BookingService bookingService;
+    final BookingService bookingService;
 
-    public BookingController(BookingService bookingService) {
-        this.bookingService = bookingService;
-    }
+    //public BookingController(BookingService bookingService) {
+    //    this.bookingService = bookingService;
+    //}
 
     @PostMapping
     BookingDtoOut addBooking(@Valid @RequestBody BookingDto bookingDto,
                              @RequestHeader(name = "X-Sharer-User-Id") Integer userId) {
-        bookingDto.setStatus(BookingStatus.WAITING);
         log.info("Got request for creating booking" + bookingDto);
         return bookingService.createBooking(bookingDto, userId);
     }
 
     @PatchMapping("/{id}")
-    BookingDtoOut approveBooking(@PathVariable Integer id,
+    public BookingDtoOut approveBooking(@PathVariable Integer id,
                                  @RequestParam Boolean approved,
                                  @RequestHeader(name = "X-Sharer-User-Id") Integer userId) {
 
@@ -54,24 +55,15 @@ public class BookingController {
         if (state.equals("UNSUPPORTED_STATUS")) {
             throw new UnknownStatusException("Unknown state: " + state);
         }
-        try {
-            State cState = State.valueOf(state);
-            return bookingService.getBookingByUser(userId, cState);
-        } catch (IllegalArgumentException e) {
-            throw new UnknownStatusException("Unknown state: " + state);
-        }
+        State cState = State.getState(state);
+        return bookingService.getBookingByUser(userId, cState);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoOut> getBookingsOwner(@RequestHeader(name = "X-Sharer-User-Id") int userId,
                                                 @RequestParam(defaultValue = "ALL") String state) {
         log.info("Got request for all bookings by User with id:  " + userId);
-        try {
-            State newState = State.valueOf(state);
-            return bookingService.getBookingForAllItemsByUser(userId, newState);
-        } catch (IllegalArgumentException er) {
-            throw new UnknownStatusException("Unknown state: " + state);
-        }
+        State cState = State.getState(state);
+        return bookingService.getBookingForAllItemsByUser(userId, cState);
     }
 }
-
