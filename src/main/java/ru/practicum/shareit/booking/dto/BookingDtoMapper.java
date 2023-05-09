@@ -8,7 +8,9 @@ import ru.practicum.shareit.user.dto.UserDtoOut;
 import ru.practicum.shareit.user.model.User;
 
 public class BookingDtoMapper {
-    private BookingDtoMapper() {}
+    private BookingDtoMapper() {
+    }
+
     public static BookingDto makeBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())

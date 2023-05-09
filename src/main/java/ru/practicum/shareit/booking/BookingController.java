@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
-import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.UnknownStatusException;
@@ -23,10 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingController {
     final BookingService bookingService;
-
-    //public BookingController(BookingService bookingService) {
-    //    this.bookingService = bookingService;
-    //}
 
     @PostMapping
     BookingDtoOut addBooking(@Valid @RequestBody BookingDto bookingDto,

@@ -27,7 +27,7 @@ public enum State {
         }
     }
 
-    public static State getState( String state) {
+    public static State getState(String state) {
         try {
             return State.valueOf(state);
         } catch (IllegalArgumentException e) {
