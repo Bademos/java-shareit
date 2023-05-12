@@ -11,6 +11,12 @@ public class BookingDtoMapper {
     private BookingDtoMapper() {
     }
 
+    public static BookingDtoForItem makeBookingDtoForItem(Booking booking) {
+        return BookingDtoForItem.builder()
+                .id(booking.getId())
+                .bookerId(booking.getUser().getId()).build();
+    }
+
     public static BookingDto makeBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())

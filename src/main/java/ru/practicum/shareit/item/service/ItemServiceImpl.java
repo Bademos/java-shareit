@@ -4,9 +4,10 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoForItem;
+import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -22,10 +23,11 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepositoryDb;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepositoryDb;
+import ru.practicum.shareit.util.ConstantsShare;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -36,7 +38,6 @@ public class ItemServiceImpl implements ItemService {
     UserRepositoryDb userRepository;
     CommentRepository commentRepository;
     BookingRepository bookingRepository;
-    Locale russianLocal = new Locale("ru");
 
     @Autowired
     public ItemServiceImpl(ItemRepositoryDb itemRepository, UserRepositoryDb userRepository, CommentRepository commentRepository, BookingRepository bookingRepository) {
@@ -54,12 +55,21 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllByUser(int userId) {
         User owner = getUserByIdWithCheck(userId);
-        return itemRepository.findAllByOwner(owner)
-                .stream()
-                .map(ItemDtoMapper::makeItemDto)
-                .map(this::addComments)
-                .map(this::getWithBooking)
-                .collect(Collectors.toList());
+        List<ItemDto> items = itemRepository.findAllByOwner(owner).stream()
+                .map(ItemDtoMapper::makeItemDto).collect(Collectors.toList());
+
+        List<Integer> itemIds = items.stream().map(ItemDto::getId).collect(Collectors.toList());
+        Map<Integer, ItemDto> itemsMap = items.stream().collect(Collectors.toMap(ItemDto::getId, item -> item));
+        List<CommentDto> comments = commentRepository.findAllComments(itemIds).stream()
+                .map(CommentDtoMapper::makeCommentDto).collect(Collectors.toList());
+        comments.forEach(comment -> itemsMap.get(comment.getItemId()).getComments().add(comment));
+
+        List<Booking> lastBookings = bookingRepository.findBookingsLast(itemIds, LocalDateTime.now(), userId, PageRequest.of(0, 1));
+        lastBookings.forEach(booking -> itemsMap.get(booking.getItem().getId()).setLastBooking(BookingDtoMapper.makeBookingDtoForItem(booking)));
+
+        List<Booking> nextBookings = bookingRepository.findBookingsNext(itemIds, LocalDateTime.now(), userId, PageRequest.of(0, 1));
+        nextBookings.forEach(booking -> itemsMap.get(booking.getItem().getId()).setNextBooking(BookingDtoMapper.makeBookingDtoForItem(booking)));
+        return items;
     }
 
     @Override
@@ -85,12 +95,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<Item> search(String text) {
-        final var tempText = text.toLowerCase(russianLocal);
+        final var tempText = text.toLowerCase(ConstantsShare.russianLocal);
         return itemRepository.findAll()
                 .stream()
                 .filter(Item::getAvailable)
-                .filter(item -> item.getDescription().toLowerCase(russianLocal).contains(tempText)
-                        || item.getName().toLowerCase(russianLocal).contains(tempText))
+                .filter(item -> item.getDescription().toLowerCase(ConstantsShare.russianLocal).contains(tempText)
+                        || item.getName().toLowerCase(ConstantsShare.russianLocal).contains(tempText))
                 .collect(Collectors.toList());
     }
 
@@ -104,7 +114,6 @@ public class ItemServiceImpl implements ItemService {
         return commentRepository.save(comment);
     }
 
-
     @Override
     public ItemDto getById(int id, int userId) {
         Item item = getItemByIdWithCheck(id);
@@ -117,25 +126,21 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private ItemDto getWithBooking(ItemDto item) {
-        List<Booking> lastBookings = bookingRepository
-                .findAllByItemIdAndStatusAndStartBookingBefore(item.getId(),
-                        BookingStatus.APPROVED, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
-        System.out.println(lastBookings);
-        if (!lastBookings.isEmpty()) {
-            BookingDtoForItem last = BookingDtoForItem.builder().id(lastBookings.get(0).getId())
-                    .bookerId(lastBookings.get(0).getUser().getId()).build();
+        Booking lst = bookingRepository.findTopByItemIdAndStatusAndStartBookingBefore(item.getId(),
+                BookingStatus.APPROVED,
+                LocalDateTime.now(),
+                ConstantsShare.sortDesc).orElse(null);
+        if (lst != null) {
+            BookingDtoForItem last = BookingDtoMapper.makeBookingDtoForItem(lst);
             item.setLastBooking(last);
-            System.out.println(last);
         }
-        List<Booking> nextBookings = bookingRepository
-                .findAllByItemIdAndStatusAndStartBookingAfter(item.getId(),
-                        BookingStatus.APPROVED, LocalDateTime.now(), Sort.by(Sort.Direction.ASC, "startBooking"));
-        System.out.println(nextBookings);
-        if (!nextBookings.isEmpty()) {
-            BookingDtoForItem next = BookingDtoForItem.builder().id(nextBookings.get(0).getId())
-                    .bookerId(nextBookings.get(0).getUser().getId()).build();
+        Booking nxt = bookingRepository.findTopByItemIdAndStatusAndStartBookingAfter(item.getId(),
+                BookingStatus.APPROVED,
+                LocalDateTime.now(),
+                ConstantsShare.sortAsc).orElse(null);
+        if (nxt != null) {
+            BookingDtoForItem next = BookingDtoMapper.makeBookingDtoForItem(nxt);
             item.setNextBooking(next);
-            System.out.println(next);
         }
         return item;
     }

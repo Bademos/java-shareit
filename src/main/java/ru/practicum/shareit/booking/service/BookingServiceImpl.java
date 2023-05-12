@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.Booking;
@@ -18,6 +17,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepositoryDb;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepositoryDb;
+import ru.practicum.shareit.util.ConstantsShare;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -99,22 +99,22 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> res;
         switch (state) {
             case ALL:
-                res = bookingRepository.findAllByUserId(userId, Sort.by(Sort.Direction.DESC, "startBooking"));
+                res = bookingRepository.findAllByUserId(userId, ConstantsShare.sortDesc);
                 break;
             case WAITING:
-                res = bookingRepository.findAllByUserIdAndStatus(userId, BookingStatus.WAITING, Sort.by(Sort.Direction.DESC, "startBooking"));
+                res = bookingRepository.findAllByUserIdAndStatus(userId, BookingStatus.WAITING, ConstantsShare.sortDesc);
                 break;
             case REJECTED:
-                res = bookingRepository.findAllByUserIdAndStatus(userId, BookingStatus.REJECTED, Sort.by(Sort.Direction.DESC, "startBooking"));
+                res = bookingRepository.findAllByUserIdAndStatus(userId, BookingStatus.REJECTED, ConstantsShare.sortDesc);
                 break;
             case PAST:
-                res = bookingRepository.findAllByUserIdAndEndBookingBefore(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
+                res = bookingRepository.findAllByUserIdAndEndBookingBefore(userId, LocalDateTime.now(), ConstantsShare.sortDesc);
                 break;
             case FUTURE:
-                res = bookingRepository.findAllByUserIdAndEndBookingAfter(userId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
+                res = bookingRepository.findAllByUserIdAndEndBookingAfter(userId, LocalDateTime.now(), ConstantsShare.sortDesc);
                 break;
             case CURRENT:
-                res = bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(userId, LocalDateTime.now(), LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
+                res = bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(userId, LocalDateTime.now(), LocalDateTime.now(), ConstantsShare.sortDesc);
                 break;
             default:
                 throw new IllegalStateException("Unknown state: " + state);
@@ -132,22 +132,22 @@ public class BookingServiceImpl implements BookingService {
                     .stream().map(Item::getId).collect(Collectors.toList());
             switch (state) {
                 case ALL:
-                    res = bookingRepository.findAllByItemIdIn(itemsId, Sort.by(Sort.Direction.DESC, "startBooking"));
+                    res = bookingRepository.findAllByItemIdIn(itemsId, ConstantsShare.sortDesc);
                     break;
                 case WAITING:
-                    res = bookingRepository.findAllByItemIdInAndStatus(itemsId, BookingStatus.WAITING, Sort.by(Sort.Direction.DESC, "startBooking"));
+                    res = bookingRepository.findAllByItemIdInAndStatus(itemsId, BookingStatus.WAITING, ConstantsShare.sortDesc);
                     break;
                 case REJECTED:
-                    res = bookingRepository.findAllByItemIdInAndStatus(itemsId, BookingStatus.REJECTED, Sort.by(Sort.Direction.DESC, "startBooking"));
+                    res = bookingRepository.findAllByItemIdInAndStatus(itemsId, BookingStatus.REJECTED, ConstantsShare.sortDesc);
                     break;
                 case PAST:
-                    res = bookingRepository.findAllByItemIdInAndEndBookingBefore(itemsId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
+                    res = bookingRepository.findAllByItemIdInAndEndBookingBefore(itemsId, LocalDateTime.now(), ConstantsShare.sortDesc);
                     break;
                 case FUTURE:
-                    res = bookingRepository.findAllByItemIdInAndEndBookingAfter(itemsId, LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
+                    res = bookingRepository.findAllByItemIdInAndEndBookingAfter(itemsId, LocalDateTime.now(), ConstantsShare.sortDesc);
                     break;
                 case CURRENT:
-                    res = bookingRepository.findAllByItemIdInAndStartBookingBeforeAndEndBookingAfter(itemsId, LocalDateTime.now(), LocalDateTime.now(), Sort.by(Sort.Direction.DESC, "startBooking"));
+                    res = bookingRepository.findAllByItemIdInAndStartBookingBeforeAndEndBookingAfter(itemsId, LocalDateTime.now(), LocalDateTime.now(), ConstantsShare.sortDesc);
                     break;
                 default:
                     throw new IllegalStateException("Unknown state: " + state);
