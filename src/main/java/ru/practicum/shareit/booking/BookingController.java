@@ -34,7 +34,7 @@ public class BookingController {
     public BookingDtoOut approveBooking(@PathVariable Integer id,
                                  @RequestParam Boolean approved,
                                  @RequestHeader(name = "X-Sharer-User-Id") Integer userId) {
-
+        log.info("Got request for approving booking");
         return bookingService.updateBooking(id, approved, userId);
     }
 

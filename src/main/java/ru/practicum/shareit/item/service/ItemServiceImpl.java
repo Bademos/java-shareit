@@ -49,7 +49,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAll() {
-        return itemRepository.findAll().stream().map(ItemDtoMapper::makeItemDto).map(this::addComments).collect(Collectors.toList());
+        List<ItemDto> items = itemRepository.findAll().stream()
+                .map(ItemDtoMapper::makeItemDto).collect(Collectors.toList());
+        addCommentsToList(items);
+        return items;
     }
 
     @Override
@@ -153,6 +156,14 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList());
         itemDto.setComments(comments);
         return itemDto;
+    }
+
+    private void addCommentsToList(List<ItemDto> items) {
+        List<Integer> itemIds = items.stream().map(ItemDto::getId).collect(Collectors.toList());
+        Map<Integer, ItemDto> itemsMap = items.stream().collect(Collectors.toMap(ItemDto::getId, item -> item));
+        List<CommentDto> comments = commentRepository.findAllComments(itemIds).stream()
+                .map(CommentDtoMapper::makeCommentDto).collect(Collectors.toList());
+        comments.forEach(comment -> itemsMap.get(comment.getItemId()).getComments().add(comment));
     }
 
     private void checkUserOwner(int id, int userId) {
