@@ -2,8 +2,10 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoMapper;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
+import ru.practicum.shareit.item.dto.comment.CommentDtoMapper;
+import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.dto.item.ItemDtoMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
@@ -35,13 +37,13 @@ public class ItemController {
     @GetMapping
     public List<ItemDto> getAll(@RequestHeader(name = "X-Sharer-User-Id") int userId) {
         log.info("Got request for items of user with i: {}", userId);
-        return service.getAllByUser(userId).stream().map(ItemDtoMapper::makeItemDto).collect(Collectors.toList());
+        return service.getAllByUser(userId);
     }
 
     @GetMapping("/{id}")
     public ItemDto getById(@RequestHeader(name = "X-Sharer-User-Id") int userId, @PathVariable int id) {
         log.info("Got request for item  with id {}", id);
-        return ItemDtoMapper.makeItemDto(service.getById(id));
+        return service.getById(id, userId);
     }
 
     @PostMapping
@@ -53,6 +55,15 @@ public class ItemController {
         Item itemCreated = service.create(item);
         return ItemDtoMapper.makeItemDto(itemCreated);
     }
+
+    @PostMapping("/{id}/comment")
+    public CommentDto createComment(@PathVariable int id,
+                                    @Valid @RequestBody CommentDto commentDto,
+                                    @RequestHeader(name = "X-Sharer-User-Id") int userId) {
+        log.info("Got request from user with id {} to create comment for item with id {}", userId, id);
+        return CommentDtoMapper.makeCommentDto(service.createComment(commentDto, userId, id));
+    }
+
 
     @PatchMapping("/{id}")
     public ItemDto update(@RequestHeader(name = "X-Sharer-User-Id") int userId,

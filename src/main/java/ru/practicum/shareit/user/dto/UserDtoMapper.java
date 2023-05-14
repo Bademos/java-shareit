@@ -21,4 +21,8 @@ public class UserDtoMapper {
                 .email(userDto.getEmail())
                 .build();
     }
+
+    public static UserDtoOut makeUserDtoOutFromUser(User user) {
+        return UserDtoOut.builder().id(user.getId()).build();
+    }
 }

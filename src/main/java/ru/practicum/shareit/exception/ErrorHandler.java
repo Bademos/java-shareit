@@ -27,15 +27,36 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleNotAvailableException(final NotAvailableException e) {
+        log.error("Not availiable exception", e);
+        return new ResponseEntity<>(Map.of("message", e.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<Map<String, String>> handleValidationException(final Error e) {
         log.error("Validation error.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(TimeIntervalException.class)
+    public ResponseEntity<Map<String, String>> handleIllegalException(final Exception e) {
+        log.error("Incorrect conditions", e);
+        return new ResponseEntity<>(Map.of("message", e.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+
     @ExceptionHandler
     public ResponseEntity<Map<String, String>> handleDoubleEntityException(final DoubleEntityException e) {
         log.error("Double Entity error:", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleUnknownStatusException(final UnknownStatusException e) {
+        log.error("Unsupported status:", e);
+        return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
