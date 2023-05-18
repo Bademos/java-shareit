@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,25 +15,25 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Integer> {
 
-    List<Booking> findAllByUserId(int userId, Sort sort);
+    Page<Booking> findAllByUserId(int userId, Pageable pager);
 
-    List<Booking> findAllByUserIdAndStatus(int userId, BookingStatus status, Sort sort);
+    Page<Booking> findAllByUserIdAndStatus(int userId, BookingStatus status, Pageable pager);
 
-    List<Booking> findAllByUserIdAndEndBookingBefore(int userId, LocalDateTime date, Sort sort);
+    Page<Booking> findAllByUserIdAndEndBookingBefore(int userId, LocalDateTime date, Pageable pager);
 
-    List<Booking> findAllByUserIdAndEndBookingAfter(int userId, LocalDateTime date, Sort sort);
+    Page<Booking> findAllByUserIdAndEndBookingAfter(int userId, LocalDateTime date, Pageable pager);
 
-    List<Booking> findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(int userId, LocalDateTime dateStart, LocalDateTime dateEnd, Sort sort);
+    Page<Booking> findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(int userId, LocalDateTime dateStart, LocalDateTime dateEnd, Pageable pager);
 
-    List<Booking> findAllByItemIdIn(List<Integer> lst, Sort sort);
+    Page<Booking> findAllByItemIdIn(List<Integer> lst, Pageable pager);
 
-    List<Booking> findAllByItemIdInAndStatus(List<Integer> lst, BookingStatus status, Sort sort);
+    Page<Booking> findAllByItemIdInAndStatus(List<Integer> lst, BookingStatus status, Pageable pager);
 
-    List<Booking> findAllByItemIdInAndEndBookingBefore(List<Integer> lst, LocalDateTime date, Sort sort);
+    Page<Booking> findAllByItemIdInAndEndBookingBefore(List<Integer> lst, LocalDateTime date, Pageable pager);
 
-    List<Booking> findAllByItemIdInAndEndBookingAfter(List<Integer> lst, LocalDateTime date, Sort sort);
+    Page<Booking> findAllByItemIdInAndEndBookingAfter(List<Integer> lst, LocalDateTime date, Pageable pager);
 
-    List<Booking> findAllByItemIdInAndStartBookingBeforeAndEndBookingAfter(List<Integer> lst, LocalDateTime dateStr, LocalDateTime dateEnd, Sort sort);
+    Page<Booking> findAllByItemIdInAndStartBookingBeforeAndEndBookingAfter(List<Integer> lst, LocalDateTime dateStr, LocalDateTime dateEnd, Pageable pager);
 
     List<Booking> findBookingByItemIdAndUserIdAndEndBookingBeforeAndStatus(int itemId, int userId, LocalDateTime now, BookingStatus approved);
 

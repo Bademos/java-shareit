@@ -3,6 +3,7 @@ package ru.practicum.shareit.booking;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -11,6 +12,8 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.UnknownStatusException;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
 /**
@@ -19,9 +22,15 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(path = "/bookings")
-@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+
+//@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+@Validated
 public class BookingController {
     final BookingService bookingService;
+
+    public BookingController(BookingService bookingServiceImpl) {
+        this.bookingService = bookingServiceImpl;
+    }
 
     @PostMapping
     BookingDtoOut addBooking(@Valid @RequestBody BookingDto bookingDto,
@@ -46,19 +55,28 @@ public class BookingController {
     }
 
     @GetMapping
-    List<BookingDtoOut> getAllBookingsByUserAndState(@RequestHeader(name = "X-Sharer-User-Id") Integer userId, @RequestParam(defaultValue = "ALL") String state) {
+    List<BookingDtoOut> getAllBookingsByUserAndState(@RequestHeader(name = "X-Sharer-User-Id") Integer userId, @RequestParam(defaultValue = "ALL") String state,
+                                                     @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                     @RequestParam(defaultValue = "20") @Positive int size) {
+        from = from /size;
         if (state.equals("UNSUPPORTED_STATUS")) {
             throw new UnknownStatusException("Unknown state: " + state);
         }
         State cState = State.getState(state);
-        return bookingService.getBookingByUser(userId, cState);
+        System.out.println("from" + from + "size" + size );
+        return bookingService.getBookingByUser(userId, cState, from, size);
     }
 
     @GetMapping("/owner")
     public List<BookingDtoOut> getBookingsOwner(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-                                                @RequestParam(defaultValue = "ALL") String state) {
+                                                @RequestParam(defaultValue = "ALL") String state,
+                                                @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                @RequestParam(defaultValue = "20") @Positive int size) {
+        from = from /size;
         log.info("Got request for all bookings by User with id:  " + userId);
+        System.out.println("from" + from + "size" + size );
+
         State cState = State.getState(state);
-        return bookingService.getBookingForAllItemsByUser(userId, cState);
+        return bookingService.getBookingForAllItemsByUser(userId, cState, from, size );
     }
 }

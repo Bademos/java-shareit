@@ -1,4 +1,4 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.request.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -16,6 +16,9 @@ import java.util.List;
 /**
  * TODO Sprint add-item-requests.
  */
+
+
+
 @Data
 @Builder(toBuilder = true)
 @NoArgsConstructor
@@ -25,6 +28,7 @@ import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequest {
+    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
@@ -34,13 +38,13 @@ public class ItemRequest {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
     @JoinColumn(name = "requestor_id", nullable = false)
-    User userOfRequest;
+    User requestor;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ConstantsShare.datePattern)
     @Column(name = "create_time")
     LocalDateTime created;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "request_id")
     List<Item> items;
 }
