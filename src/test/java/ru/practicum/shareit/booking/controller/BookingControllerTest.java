@@ -162,8 +162,7 @@ public class BookingControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .param("state","unsup" )
                             .header("X-Sharer-User-Id", 1)
-                            .accept(MediaType.APPLICATION_JSON)
-                    ).andDo(MockMvcResultHandlers.print())
+                            .accept(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(500));
         } catch (Exception e) {
             throw new RuntimeException(e);

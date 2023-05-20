@@ -187,7 +187,7 @@ public class ItemServiceTest {
     @Test
     void searchTest() {
         itemService.create(itemA);
-        assertEquals(itemService.search("tst").size(), 0) ;
+        assertEquals(itemService.search("tst").size(), 0);
 
     }
 

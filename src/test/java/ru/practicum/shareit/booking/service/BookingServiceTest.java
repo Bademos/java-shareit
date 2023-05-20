@@ -316,11 +316,11 @@ public class BookingServiceTest {
         assertThrows(NotFoundException.class, () -> bookingService.getBookingByUser(99, State.CURRENT, 0, 1));
     }
 
-
     @Test
-    void getBookingsForItemsOfUserWothWrongUSerTest() {
+    void getBookingsForItemsOfUserWithWrongUSerTest() {
         assertThrows(NotFoundException.class, () -> bookingService.getBookingForAllItemsByUser(99, State.CURRENT, 0, 1));
     }
+
     @Test
     void getBookingsForItemsOfUserTest() {
         bookingService.createBooking(bookingDtoA, userB.getId());

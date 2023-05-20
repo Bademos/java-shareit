@@ -89,7 +89,7 @@ public class ItemDtoTest {
                 .authorId(1)
                 .text("boring")
                 .build();
-        Comment comment= CommentDtoMapper.makeComment(commentDto,
+        Comment comment = CommentDtoMapper.makeComment(commentDto,
                 User.builder().id(1).build(),
                 Item.builder().id(1).build());
         assertEquals(commentDto.getItemId(), comment.getItem().getId());
