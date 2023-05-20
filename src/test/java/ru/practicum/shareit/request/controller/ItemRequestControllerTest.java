@@ -45,12 +45,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ItemRequestController.class)
 public class ItemRequestControllerTest {
     private static String address;
-    private static String jsonIR;
-    private static String jsonIRIncorrect;
-    private static ItemRequest itemRequest;
     private static User user;
     private static UserDto userDto;
+    private static ItemRequest itemRequest;
+
     private static ItemRequestDto itemRequestDto;
+    private static ItemRequest itemRequestB;
+
+    private static ItemRequestDto itemRequestDtoB;
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
 
@@ -69,27 +71,27 @@ public class ItemRequestControllerTest {
     @BeforeAll
     public static void beforeAll() {
         address = "/requests";
-        jsonIR = "{" +
-                "    \"description\": \"Нужна паяльная лампа\"" +
-                "}";
-        jsonIRIncorrect = "{" +
-                "    \"description\": null" +
-                "}";
+
         user = User.builder().id(1)
                 .email("a@caca.com")
                 .name("A")
                 .build();
         userDto = UserDtoMapper.makeUserDto(user);
 
-
-
         itemRequest = ItemRequest.builder()
                 .id(1)
-                .description("boring")
+                .description("Нужна паяльная лампа")
                 .requestor(user)
                 .created(LocalDateTime.of(2022, 2, 24, 5, 0, 1))
                 .build();
         itemRequestDto = ItemRequestMapper.makeItemRequestDto(itemRequest);
+
+        itemRequestB = ItemRequest.builder()
+                .id(1)
+                .requestor(user)
+                .created(LocalDateTime.of(2022, 2, 24, 5, 0, 1))
+                .build();
+        itemRequestDtoB = ItemRequestMapper.makeItemRequestDto(itemRequestB);
     }
 
     @Test
@@ -98,34 +100,25 @@ public class ItemRequestControllerTest {
                 .thenReturn(itemRequestDto);
 
         mockMvc.perform(post(address)
-                        .content(jsonIR)
+                        .content(mapper.writeValueAsString(itemRequestDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
                         .accept(MediaType.APPLICATION_JSON)
                 ).andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
+                .andExpect(status().is(200))
                 .andExpect(jsonPath("$.description", is(itemRequestDto.getDescription())));
         verify(itemRequestService, times(1)).addRequest(any(),any());
     }
 
     @Test
     void addIncorrectItemRequestTest() throws Exception {
-        /*
-
-        mockMvc.perform(post("/users")
-                        .content(mapper.writeValueAsString(userDto))
-                        .characterEncoding(StandardCharsets.UTF_8)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk()); */
-
         try {
             mockMvc.perform(post(address)
-                    .content(jsonIRIncorrect)
+                    .content(mapper.writeValueAsString(itemRequestDtoB))
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("X-Sharer-User-Id", 1)
-            ).andExpect(status().isBadRequest());
+            ).andExpect(status().is(400));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -135,13 +128,13 @@ public class ItemRequestControllerTest {
     void getRequestByIdTest() throws Exception {
         when(itemRequestService.getRequestById(any(),any())).thenReturn(itemRequestDto);
         mockMvc.perform(get(address + "/1")
-                        .content(jsonIR)
+                        .content(mapper.writeValueAsString(itemRequestDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
                         .accept(MediaType.APPLICATION_JSON)
                 ).andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
+                .andExpect(status().is(200))
                 .andExpect(jsonPath("$.description", is(itemRequest.getDescription())));
     verify(itemRequestService,times(1)).getRequestById(any(), any());    }
 
@@ -149,10 +142,10 @@ public class ItemRequestControllerTest {
     void getAllByUserIdTest() throws Exception {
         when(itemRequestService.getAllRequestByUser(any())).thenReturn(Collections.singletonList(itemRequestDto));
             mockMvc.perform(post(address)
-                    .content(jsonIR)
+                    .content(mapper.writeValueAsString(itemRequestDto))
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("X-Sharer-User-Id", 1)
-                    ).andExpect(status().isOk());
+                    ).andExpect(status().is(200));
 
 
                 mockMvc.perform(get(address )
@@ -161,9 +154,8 @@ public class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .accept(MediaType.APPLICATION_JSON)
                 ).andDo(MockMvcResultHandlers.print())
-                .andExpect(status().isOk())
+                .andExpect(status().is(200))
                 .andExpect(jsonPath("$.length()").value(1));
-        ;
         verify(itemRequestService,times(1)).getAllRequestByUser(any());
     }
 }

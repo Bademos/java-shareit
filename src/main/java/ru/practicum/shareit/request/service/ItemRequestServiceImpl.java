@@ -34,7 +34,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto addRequest(ItemRequestDto itemRequestDto, Integer userId) {
         User user = userService.getById(userId);
-        ItemRequest itemRequest = ItemRequestMapper.makeItemRequestFromDto(itemRequestDto,user);
+        ItemRequest itemRequest = ItemRequestMapper.makeItemRequestFromDto(itemRequestDto, user);
         itemRequest.toBuilder().created(LocalDateTime.now());
         return ItemRequestMapper.makeItemRequestDto(requestRepository.save(itemRequest));
     }
@@ -42,7 +42,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public ItemRequestDto getRequestById(Integer userId, Integer integer) {
         userService.getById(userId);
-        ItemRequest result =  requestRepository.findById(integer)
+        ItemRequest result = requestRepository.findById(integer)
                 .orElseThrow(() -> new NotFoundException("the request is absent"));
         return ItemRequestMapper.makeItemRequestDto(result);
     }
@@ -60,8 +60,6 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> getAllRequestsByPages(Integer from, Integer size, Integer userId) {
         User user = userService.getById(userId);
-        System.out.println("another ______ from" + from + "size" + size );
-
         return requestRepository.findAllByRequestorNot(user, PageRequest.of(from, size, Sort.by(Sort.Direction.ASC, "created")))
                 .getContent()
                 .stream()

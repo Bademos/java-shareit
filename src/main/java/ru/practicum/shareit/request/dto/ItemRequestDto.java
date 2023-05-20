@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.dto.item.ItemDto;
-import ru.practicum.shareit.item.dto.item.ItemDtoOut;
 import ru.practicum.shareit.util.ConstantsShare;
 
 import javax.validation.constraints.NotNull;

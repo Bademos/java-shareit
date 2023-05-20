@@ -14,6 +14,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @AutoConfigureTestDatabase
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-//@Transactional
+@Transactional
 public class ItemRequestServiceTest {
     @Autowired
     ItemRequestServiceImpl itemRequestService;
@@ -76,9 +77,9 @@ public class ItemRequestServiceTest {
                 .description("bad request")
                 .requestor(userB)
                 .build();
-      itemRequestDtoA = ItemRequestMapper.makeItemRequestDto(itemRequestA);
-      itemRequestDtoB = ItemRequestMapper.makeItemRequestDto(itemRequestB);
-      itemRequestDtoIncorrect = ItemRequestMapper.makeItemRequestDto(itemRequestIncorrect);
+        itemRequestDtoA = ItemRequestMapper.makeItemRequestDto(itemRequestA);
+        itemRequestDtoB = ItemRequestMapper.makeItemRequestDto(itemRequestB);
+        itemRequestDtoIncorrect = ItemRequestMapper.makeItemRequestDto(itemRequestIncorrect);
 
     }
 
@@ -88,9 +89,11 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void addIncorrectItemRequest() {
+    void addIncorrectItemRequestTest() {
         assertThrows(
                 RuntimeException.class,
                 () -> itemRequestService.addRequest(itemRequestDtoIncorrect, userB.getId()));
     }
+
+
 }

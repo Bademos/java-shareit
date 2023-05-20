@@ -81,9 +81,9 @@ public class ItemRequestRepositoryTest {
     }
 
     @Test
-    void findItemRequestByRequestorIdNot() {
+    void findItemRequestorIdNotTest() {
         var itemRequests = itemRequestRepository.findAllByRequestorNot(userB,
-                PageRequest.of(0,1, Sort.by(Sort.Direction.ASC, "created")));
+                PageRequest.of(0, 1, Sort.by(Sort.Direction.ASC, "created")));
 
         assertEquals(itemRequests.getContent().size(), 1);
     }

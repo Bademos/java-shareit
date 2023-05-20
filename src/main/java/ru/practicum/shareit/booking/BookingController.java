@@ -1,7 +1,5 @@
 package ru.practicum.shareit.booking;
 
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +7,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.TimeIntervalException;
 import ru.practicum.shareit.exception.UnknownStatusException;
 
 import javax.validation.Valid;
@@ -72,9 +71,12 @@ public class BookingController {
                                                 @RequestParam(defaultValue = "ALL") String state,
                                                 @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                 @RequestParam(defaultValue = "20") @Positive int size) {
+        if (from < 0) {
+            throw new TimeIntervalException("oops");
+        }
+
         from = from /size;
         log.info("Got request for all bookings by User with id:  " + userId);
-        System.out.println("from" + from + "size" + size );
 
         State cState = State.getState(state);
         return bookingService.getBookingForAllItemsByUser(userId, cState, from, size );
