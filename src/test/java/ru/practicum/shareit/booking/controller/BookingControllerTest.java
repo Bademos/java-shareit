@@ -160,7 +160,7 @@ public class BookingControllerTest {
             mockMvc.perform(get(address)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .param("state","unsup" )
+                            .param("state","unsup")
                             .header("X-Sharer-User-Id", 1)
                             .accept(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(500));
