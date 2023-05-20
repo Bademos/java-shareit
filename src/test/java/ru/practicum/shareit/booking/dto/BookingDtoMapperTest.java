@@ -21,6 +21,7 @@ public class BookingDtoMapperTest {
     static Item item;
     final LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
     final LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
+
     @BeforeAll
    static void setUp() {
         userA = User.builder()
