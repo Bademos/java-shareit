@@ -54,6 +54,7 @@ public class ErrorHandler {
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, String>> handleValidException(final Exception e) {
         log.error("We in problem", e);

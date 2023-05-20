@@ -76,8 +76,7 @@ public class BookingController {
         }
         from = from / size;
         log.info("Got request for all bookings by User with id:  " + userId);
-
         State cState = State.getState(state);
-        return bookingService.getBookingForAllItemsByUser(userId, cState, from, size );
+        return bookingService.getBookingForAllItemsByUser(userId, cState, from, size);
     }
 }

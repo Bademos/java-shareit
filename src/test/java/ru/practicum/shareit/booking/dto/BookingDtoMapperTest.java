@@ -41,8 +41,9 @@ public class BookingDtoMapperTest {
                 .description("booring")
                 .build();
     }
+
     @Test
-    void BookingFromBookingDtoTest() {
+    void bookingFromBookingDtoTest() {
         BookingDto bookingDto = BookingDto.builder()
                 .id(1)
                 .itemId(1)

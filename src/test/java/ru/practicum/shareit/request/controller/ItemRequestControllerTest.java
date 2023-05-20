@@ -148,7 +148,7 @@ public class ItemRequestControllerTest {
                     .header("X-Sharer-User-Id", 1)
                     ).andExpect(status().is(200));
 
-                mockMvc.perform(get(address )
+                mockMvc.perform(get(address)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
