@@ -60,7 +60,9 @@ public class BookingController {
             throw new UnknownStatusException("Unknown state: " + state);
         }
         State cState = State.getState(state);
-        System.out.println("from" + from + "size" + size);
+        String description = State.description(cState);
+        log.info("Got request with status: {} ({}) for all bookings by User with id: {} ",cState, description, userId);
+
         return bookingService.getBookingByUser(userId, cState, from, size);
     }
 
@@ -73,8 +75,9 @@ public class BookingController {
             throw new TimeIntervalException("oops");
         }
         from = from / size;
-        log.info("Got request for all bookings by User with id:  " + userId);
         State cState = State.getState(state);
+        String description = State.description(cState);
+        log.info("Got request with status: {} ({}) for all bookings by User with id: {} ",cState, description, userId);
         return bookingService.getBookingForAllItemsByUser(userId, cState, from, size);
     }
 }
