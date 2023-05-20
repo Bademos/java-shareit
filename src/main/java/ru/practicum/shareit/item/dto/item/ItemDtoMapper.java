@@ -3,7 +3,6 @@ package ru.practicum.shareit.item.dto.item;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -28,6 +27,7 @@ public class ItemDtoMapper {
                 .owner(user).build();
     }
 
+    /*
     public static Item makeItemFromDto(ItemDto itemDto, User user, ItemRequest itemRequest) {
         return Item.builder()
                 .id(itemDto.getId())
@@ -36,7 +36,7 @@ public class ItemDtoMapper {
                 .itemRequest(itemRequest)
                 .available(itemDto.getAvailable())
                 .owner(user).build();
-    }
+    }*/
 
     public static ItemDtoOut makeItemDtoOutFromItem(Item item) {
         return ItemDtoOut.builder()

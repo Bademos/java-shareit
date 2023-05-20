@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -21,8 +21,6 @@ import java.util.List;
 @RestController
 @Slf4j
 @RequestMapping(path = "/bookings")
-
-//@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @Validated
 public class BookingController {
     final BookingService bookingService;

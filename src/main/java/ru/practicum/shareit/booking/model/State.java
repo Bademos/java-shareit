@@ -9,7 +9,7 @@ public enum State {
     FUTURE,
     WAITING,
     REJECTED;
-
+/*
     public static String description(State state) {
         switch (state) {
             case ALL:
@@ -26,7 +26,7 @@ public enum State {
                 return "Uncertain state";
         }
     }
-
+*/
     public static State getState(String state) {
         try {
             return State.valueOf(state);

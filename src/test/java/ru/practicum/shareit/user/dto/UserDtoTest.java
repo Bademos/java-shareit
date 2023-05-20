@@ -29,4 +29,6 @@ public class UserDtoTest {
         assertEquals(userResponseDto.getName(), user.getName());
         assertEquals(userResponseDto.getEmail(), user.getEmail());
     }
+
+
 }

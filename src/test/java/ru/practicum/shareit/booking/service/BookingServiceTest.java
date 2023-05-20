@@ -161,11 +161,32 @@ public class BookingServiceTest {
                 .user(userB)
                 .status(BookingStatus.WAITING)
                 .build();
-
         BookingDto incrrectBookingDto = BookingDtoMapper.makeBookingDto(incorrectBooking);
-
-
         assertThrows(TimeIntervalException.class, () -> {
+            bookingService.createBooking(incrrectBookingDto, incorrectBooking.getUser().getId());
+        });
+    }
+
+    @Test
+    void createBookingByOwner() {
+        Item itemInc = Item.builder()
+                .id(3)
+                .name("test3")
+                .description("test test")
+                .available(true)
+                .owner(userA)
+                .build();
+        itemService.create(itemInc);
+        Booking incorrectBooking = Booking.builder()
+                .id(1)
+                .endBooking(LocalDateTime.of(2021, 1, 1, 1, 10, 1))
+                .startBooking(LocalDateTime.of(2021, 1, 1, 1, 1, 1))
+                .item(itemInc)
+                .user(userA)
+                .status(BookingStatus.WAITING)
+                .build();
+        BookingDto incrrectBookingDto = BookingDtoMapper.makeBookingDto(incorrectBooking);
+        assertThrows(NotFoundException.class, () -> {
             bookingService.createBooking(incrrectBookingDto, incorrectBooking.getUser().getId());
         });
     }
@@ -179,6 +200,17 @@ public class BookingServiceTest {
         assertEquals(bookingDtoOut.getStart(), bookingA.getStartBooking());
         assertEquals(bookingDtoOut.getEnd(), bookingA.getEndBooking());
         assertEquals(bookingDtoOut.getStatus(), BookingStatus.APPROVED);
+    }
+
+    @Test
+    void updateRejectedTest() {
+        bookingService.createBooking(bookingDtoA, bookingA.getUser().getId());
+        BookingDtoOut bookingDtoOut = bookingService.updateBooking(1, false, 1);
+
+        assertEquals(bookingDtoOut.getId(), bookingA.getId());
+        assertEquals(bookingDtoOut.getStart(), bookingA.getStartBooking());
+        assertEquals(bookingDtoOut.getEnd(), bookingA.getEndBooking());
+        assertEquals(bookingDtoOut.getStatus(), BookingStatus.REJECTED);
     }
 
     @Test
@@ -209,6 +241,32 @@ public class BookingServiceTest {
         assertEquals(booking.getEnd(), bookingA.getEndBooking());
     }
 
+    @Test
+    void getBookingByIdWithWrongUserTest() {
+        bookingService.createBooking(bookingDtoA, userB.getId());
+        assertThrows(NotFoundException.class, () -> {
+            bookingService.getBookingById(1, 99);
+        });
+    }
+
+    @Test
+    void getBookingByIdWithWrongIdTest() {
+        assertThrows(NotFoundException.class, () -> {
+            bookingService.getBookingById(1, 1);
+        });
+    }
+
+
+    @Test
+    void getAllTest() {
+        bookingService.createBooking(bookingDtoA, userB.getId());
+        List<BookingDtoOut> booking = bookingService.getBookingByUser(userB.getId(), State.ALL, 0, 1);
+
+        assertEquals(booking.size(), 1);
+        assertEquals(booking.get(0).getId(), bookingA.getId());
+        assertEquals(booking.get(0).getStart(), bookingA.getStartBooking());
+        assertEquals(booking.get(0).getEnd(), bookingA.getEndBooking());
+    }
 
     @Test
     void getWaitingTest() {
@@ -254,6 +312,16 @@ public class BookingServiceTest {
     }
 
     @Test
+    void getWrongUSerTest() {
+        assertThrows(NotFoundException.class, () -> bookingService.getBookingByUser(99, State.CURRENT, 0, 1));
+    }
+
+
+    @Test
+    void getBookingsForItemsOfUserWothWrongUSerTest() {
+        assertThrows(NotFoundException.class, () -> bookingService.getBookingForAllItemsByUser(99, State.CURRENT, 0, 1));
+    }
+    @Test
     void getBookingsForItemsOfUserTest() {
         bookingService.createBooking(bookingDtoA, userB.getId());
         List<BookingDtoOut> booking = bookingService.getBookingForAllItemsByUser(userA.getId(), State.ALL, 0, 1);
@@ -263,6 +331,7 @@ public class BookingServiceTest {
         assertEquals(booking.get(0).getStart(), bookingA.getStartBooking());
         assertEquals(booking.get(0).getEnd(), bookingA.getEndBooking());
     }
+
 
     @Test
     void getBookingsForItemsOfUserWaitingTest() {

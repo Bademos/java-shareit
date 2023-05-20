@@ -85,7 +85,6 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDtoOut getBookingById(int bookingId, int userId) {
         getUserByIdWithCheck(userId);
-
         if (bookingRepository.findById(bookingId).isPresent()) {
             Booking booking = bookingRepository.findById(bookingId).get();
             checkBookingByUser(booking, userId);
@@ -129,8 +128,7 @@ public class BookingServiceImpl implements BookingService {
     public List<BookingDtoOut> getBookingForAllItemsByUser(int userId, State state, Integer from, Integer size) {
         getUserByIdWithCheck(userId);
         Page<Booking> res;
-        if (userRepository.findById(userId).isPresent()) {
-            List<Integer> itemsId = itemRepository.findAllByOwner(userRepository.findById(userId).get())
+        List<Integer> itemsId = itemRepository.findAllByOwner(userRepository.findById(userId).orElseThrow())
                     .stream().map(Item::getId).collect(Collectors.toList());
             switch (state) {
                 case ALL:
@@ -154,9 +152,7 @@ public class BookingServiceImpl implements BookingService {
                 default:
                     throw new IllegalStateException("Unknown state: " + state);
             }
-        } else {
-            throw new NotFoundException("User is absent");
-        }
+
         return res.stream().map(BookingDtoMapper::makeBookingDtoOutFromBooking).collect(Collectors.toList());
     }
 

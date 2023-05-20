@@ -16,7 +16,9 @@ import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -95,5 +97,67 @@ public class ItemRequestServiceTest {
                 () -> itemRequestService.addRequest(itemRequestDtoIncorrect, userB.getId()));
     }
 
+    @Test
+    void addItemRequest() {
+        ItemRequestDto itemRequest = itemRequestService.addRequest(itemRequestDtoA, userA.getId());
 
+        assertEquals(itemRequest.getId(), itemRequestA.getId());
+        assertEquals(itemRequest.getDescription(), itemRequestA.getDescription());
+
+    }
+
+
+
+/*
+    @Test
+    void addItemRequestWithoutUser() {
+        assertThrows(
+                ContainsFalseException.class,
+                () -> itemRequestService.addItemRequest(correctItemRequest2));
+    }
+*/
+    @Test
+    void getItemRequest() {
+        itemRequestService.addRequest(itemRequestDtoA, userA.getId());
+
+        ItemRequestDto itemRequest = itemRequestService.getRequestById(userA.getId(), 1);
+
+        assertEquals(itemRequest.getId(), itemRequestA.getId());
+        assertEquals(itemRequest.getDescription(), itemRequestA.getDescription());
+        assertEquals(itemRequest.getRequestorId(), itemRequestA.getRequestor().getId());
+    }
+
+    @Test
+    void getAllItemRequestByUser() {
+        ItemRequestDto itemRequestDto = itemRequestService.addRequest(itemRequestDtoA, userA.getId());
+
+        List<ItemRequestDto> itemRequest = itemRequestService.getAllRequestByUser(userA.getId());
+
+        assertEquals(itemRequest.size(), 1);
+        assertEquals(itemRequest.get(0).getId(), itemRequestA.getId());
+        assertEquals(itemRequest.get(0).getDescription(), itemRequestA.getDescription());
+        assertEquals(itemRequest.get(0).getRequestorId(), itemRequestA.getRequestor().getId());
+    }
+
+    @Test
+    void getItemRequestFromSizeOtherUser() {
+        userService.create(userB);
+        itemRequestService.addRequest(itemRequestDtoA, userA.getId());
+
+        List<ItemRequestDto> itemRequest = itemRequestService.getAllRequestsByPages(0, 1, userB.getId());
+
+        assertEquals(itemRequest.size(), 1);
+        assertEquals(itemRequest.get(0).getId(), itemRequestA.getId());
+        assertEquals(itemRequest.get(0).getDescription(), itemRequestA.getDescription());
+        assertEquals(itemRequest.get(0).getRequestorId(), itemRequestA.getRequestor().getId());
+    }
+
+    @Test
+    void getItemRequestFromSize() {
+        itemRequestService.addRequest(itemRequestDtoA, userA.getId());
+
+        var itemRequest = itemRequestService.getAllRequestsByPages(0, 1, userA.getId());
+
+        assertEquals(itemRequest.size(), 0);
+    }
 }

@@ -10,7 +10,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
+import ru.practicum.shareit.item.dto.comment.CommentDtoMapper;
 import ru.practicum.shareit.item.dto.item.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
@@ -41,6 +45,10 @@ public class ItemServiceTest {
     private static Item itemB;
 
     private static Item updatedItem;
+
+    private static Comment comment;
+
+    private static CommentDto commmentDto;
 
 
     @BeforeAll
@@ -80,6 +88,13 @@ public class ItemServiceTest {
                 .available(false)
                 .owner(userA)
                 .build();
+
+        comment = Comment.builder()
+                .text("test")
+                .item(itemA)
+                .user(userA)
+                .build();
+        commmentDto = CommentDtoMapper.makeCommentDto(comment);
 
     }
 
@@ -147,12 +162,40 @@ public class ItemServiceTest {
     }
 
     @Test
+    void getAllTest() {
+        itemService.create(itemA);
+        List<ItemDto> items = itemService.getAll();
+
+        assertEquals(items.size(), 1);
+        assertEquals(items.get(0).getId(), itemA.getId());
+        assertEquals(items.get(0).getName(), itemA.getName());
+        assertEquals(items.get(0).getDescription(), itemA.getDescription());
+    }
+
+
+
+    @Test
     void deleteTest() {
         itemService.create(itemA);
 
         itemService.removeItem(itemA.getId());
 
         assertThrows(NotFoundException.class, () -> itemService.getById(itemA.getId(), itemA.getOwner().getId()));
+
+    }
+
+    @Test
+    void searchTest() {
+        itemService.create(itemA);
+        assertEquals(itemService.search("tst").size(), 0) ;
+
+    }
+
+    @Test
+    void createCommentWithOutBookingTest() {
+        userService.create(userA);
+        itemService.create(itemA);
+        assertThrows(ValidationException.class, () ->  itemService.createComment(commmentDto,userA.getId(),itemA.getId()));
 
     }
 }

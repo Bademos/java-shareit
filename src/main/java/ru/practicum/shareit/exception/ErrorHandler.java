@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.booking.BookingController;
+import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.item.controller.ItemController;
-import ru.practicum.shareit.request.ItemRequestController;
+import ru.practicum.shareit.request.controller.ItemRequestController;
 import ru.practicum.shareit.user.controller.UserController;
 
 import javax.validation.ConstraintViolationException;
@@ -20,7 +20,7 @@ import java.util.Map;
         BookingController.class})
 public class ErrorHandler {
 
-    @ExceptionHandler({NotFoundException.class, GetNotFoundException.class, UpdateNotFoundException.class})
+    @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<Map<String, String>> handleNotFoundException(final Exception e) {
         log.error("ID not found.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
@@ -41,12 +41,6 @@ public class ErrorHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleValidationException(final Error e) {
-        log.error("Validation error.", e);
-        return new ResponseEntity<>(Map.of("message", e.getMessage()),
-                HttpStatus.BAD_REQUEST);
-    }
 
     @ExceptionHandler(TimeIntervalException.class)
     public ResponseEntity<Map<String, String>> handleIllegalException(final Exception e) {
@@ -55,17 +49,12 @@ public class ErrorHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, String>> handleValidException(final Exception e) {
         log.error("We in problem", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleDoubleEntityException(final DoubleEntityException e) {
-        log.error("Double Entity error:", e);
-        return new ResponseEntity<>(Map.of("message", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler

@@ -15,7 +15,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import ru.practicum.shareit.request.ItemRequestController;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
@@ -140,7 +139,7 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void getAllByUserIdTest() throws Exception {
+    void getAllRequestByUserIdTest() throws Exception {
         when(itemRequestService.getAllRequestByUser(any())).thenReturn(Collections.singletonList(itemRequestDto));
             mockMvc.perform(post(address)
                     .content(mapper.writeValueAsString(itemRequestDto))
@@ -157,5 +156,23 @@ public class ItemRequestControllerTest {
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.length()").value(1));
         verify(itemRequestService,times(1)).getAllRequestByUser(any());
+    }
+
+    @Test
+    void addRequestByPagesTest() {
+        when(itemRequestService.getAllRequestsByPages(anyInt(), anyInt(), anyInt())).thenReturn(Collections.singletonList(itemRequestDto));
+        try {
+            mockMvc.perform(get(address + "/all")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-Sharer-User-Id", 1)
+                            .accept(MediaType.APPLICATION_JSON)
+                    ).andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().is(200))
+                    .andExpect(jsonPath("$.length()").value(1));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        verify(itemRequestService,times(1)).getAllRequestsByPages(anyInt(), anyInt(), anyInt());
     }
 }

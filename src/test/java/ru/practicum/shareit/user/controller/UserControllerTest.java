@@ -185,4 +185,16 @@ public class UserControllerTest {
 
         verify(userService, times(1)).getAll();
     }
+
+    @Test
+    void deleteUser() {
+        try {
+            mockMvc.perform(delete(address + "/1")
+                    .contentType(MediaType.APPLICATION_JSON)
+            ).andExpect(status().is(200));
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

@@ -92,5 +92,4 @@ public class BookingDtoMapperTest {
         assertEquals(bookingDtoOut.getBooker(), userDtoOut);
         assertEquals(bookingDtoOut.getStart(), booking.getStartBooking());
     }
-
 }

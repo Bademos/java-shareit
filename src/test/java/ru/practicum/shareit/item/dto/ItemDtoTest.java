@@ -3,8 +3,11 @@ package ru.practicum.shareit.item.dto;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import ru.practicum.shareit.item.dto.comment.CommentDto;
+import ru.practicum.shareit.item.dto.comment.CommentDtoMapper;
 import ru.practicum.shareit.item.dto.item.ItemDto;
 import ru.practicum.shareit.item.dto.item.ItemDtoMapper;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -63,5 +66,33 @@ public class ItemDtoTest {
         assertEquals(item.getName(), itemDtoResponse.getName());
         assertEquals(item.getDescription(), itemDtoResponse.getDescription());
         assertEquals(itemDtoResponse.getId(),item.getId());
+    }
+
+    @Test
+    void commentDtoMakeTest() {
+        Comment comment = Comment.builder()
+                .id(1)
+                .item(Item.builder().id(1).build())
+                .user(User.builder().id(1).build())
+                .created(LocalDateTime.now())
+                .build();
+        CommentDto commentDto = CommentDtoMapper.makeCommentDto(comment);
+        assertEquals(commentDto.getItemId(), comment.getItem().getId());
+        assertEquals(commentDto.getCreated(), comment.getCreated());
+    }
+
+    @Test
+    void commentMakeFromDtoTest() {
+        CommentDto commentDto = CommentDto.builder()
+                .id(1)
+                .itemId(1)
+                .authorId(1)
+                .text("boring")
+                .build();
+        Comment comment= CommentDtoMapper.makeComment(commentDto,
+                User.builder().id(1).build(),
+                Item.builder().id(1).build());
+        assertEquals(commentDto.getItemId(), comment.getItem().getId());
+        assertEquals(commentDto.getAuthorId(), comment.getUser().getId());
     }
 }

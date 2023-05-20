@@ -5,8 +5,8 @@ public enum BookingStatus {
     REJECTED,
     REQUESTED,
     WAITING,
-    CANCELED;
-
+    CANCELED
+/*
 public static String description(BookingStatus status) {
     switch (status) {
         case APPROVED:
@@ -22,5 +22,9 @@ public static String description(BookingStatus status) {
         default:
             return "Uncertain status.";
     }
+
+
 }
+
+ */
 }

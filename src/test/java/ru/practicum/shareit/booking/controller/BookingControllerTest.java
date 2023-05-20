@@ -13,7 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import ru.practicum.shareit.booking.BookingController;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoMapper;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
@@ -156,6 +155,25 @@ public class BookingControllerTest {
     }
 
     @Test
+    void getBookingsByUserUnsupportedStatusTest() {
+        try {
+            mockMvc.perform(get(address)
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .param("state","unsup" )
+                            .header("X-Sharer-User-Id", 1)
+                            .accept(MediaType.APPLICATION_JSON)
+                    ).andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().is(500));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        verify(bookingService, times(0))
+                .getBookingByUser(anyInt(), any(), anyInt(), anyInt());
+    }
+
+    @Test
     void getBookingsByOwnerTest() {
         when(bookingService.getBookingForAllItemsByUser(anyInt(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.singletonList(bookingDto));
@@ -217,6 +235,43 @@ public class BookingControllerTest {
 
         verify(bookingService, times(1)).createBooking(any(), anyInt());
     }
+
+    @Test
+    void approveBookingTest() {
+        BookingDtoOut bookingDtoOutResp = BookingDtoOut.builder()
+                                        .id(1).status(BookingStatus.APPROVED).build();
+        when(bookingService.updateBooking(anyInt(),anyBoolean(), anyInt())).thenReturn(bookingDtoOutResp);
+        try {
+            mockMvc.perform(patch(address + "/1")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-Sharer-User-Id", 1)
+                            .param("approved", "1")
+                            .accept(MediaType.APPLICATION_JSON)
+                    ).andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().is(200));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        verify(bookingService, times(1)).updateBooking(anyInt(),anyBoolean(), anyInt());
+    }
+
+    @Test
+    void getBookingTest() {
+        when(bookingService.getBookingById(anyInt(),anyInt())).thenReturn(bookingDto);
+        try {
+            mockMvc.perform(get(address + "/1")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-Sharer-User-Id", 1)
+                            .accept(MediaType.APPLICATION_JSON)
+                    ).andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().is(200));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }
 

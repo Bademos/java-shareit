@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.DoubleEntityException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepositoryDb;
@@ -35,10 +34,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User user) {
-        if (user.getEmail() != null
-                && !user.getEmail().isEmpty() && !user.getEmail().equals(repository.findById(user.getId()).orElseThrow().getEmail())) {
-            emailCheck(user.getEmail());
-        }
         User oldUser = repository.findById(user.getId()).orElseThrow();
         User oldUpd = updateSrv(oldUser, user);
         return repository.save(oldUpd);
@@ -50,12 +45,6 @@ public class UserServiceImpl implements UserService {
             return repository.findById(id).orElseThrow();
         } else {
             throw new NotFoundException("User with id" + id + "is not found");
-        }
-    }
-
-    private void emailCheck(String email) {
-        if (repository.findByEmail(email).isPresent()) {
-            throw new DoubleEntityException("Incorrect email address");
         }
     }
 

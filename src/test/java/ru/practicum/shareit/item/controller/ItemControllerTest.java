@@ -20,11 +20,15 @@ import ru.practicum.shareit.item.dto.item.ItemDtoMapper;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -54,6 +58,10 @@ public class ItemControllerTest {
     private static Comment comment;
 
     private static CommentDto commentDto;
+
+    private static ItemRequest itemRequest;
+
+    private static ItemRequestDto itemRequestDto;
     final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
 
@@ -78,6 +86,14 @@ public class ItemControllerTest {
                 .name("Vadique")
                 .email("vq@st.test")
                 .build();
+        itemRequest = ItemRequest.builder()
+                .id(1)
+                //.requestor(User.builder().id(2).build())
+                .requestor(user)
+                .created(LocalDateTime.now())
+                .description("test")
+                .build();
+        itemRequestDto = ItemRequestMapper.makeItemRequestDto(itemRequest);
 
         item = Item.builder()
                 .id(1)
@@ -85,6 +101,7 @@ public class ItemControllerTest {
                 .description("дешевый")
                 .available(true)
                 .owner(user)
+                .itemRequest(itemRequest)
                 .build();
         itemDto = ItemDtoMapper.makeItemDto(item);
         updateItem = Item.builder()
@@ -108,6 +125,7 @@ public class ItemControllerTest {
     @Test
     void createItemTest() {
         when(itemService.create(any())).thenReturn(item);
+        when(itemRequestService.getRequestById(anyInt(), anyInt())).thenReturn(itemRequestDto);
 
         try {
             mockMvc.perform(post(address)
@@ -218,6 +236,7 @@ public class ItemControllerTest {
     void searchTest() {
         when(itemService.search(anyString()))
                 .thenReturn(Collections.singletonList(item));
+        when(itemRequestService.getRequestById(anyInt(), anyInt())).thenReturn(itemRequestDto);
 
         try {
             mockMvc.perform(get(address + "/search")
@@ -236,5 +255,23 @@ public class ItemControllerTest {
         verify(itemService, times(1))
                 .search(anyString());
     }
+/*
+    @Test
+    void deleteTest() {
+        //when(itemService.removeItem(anyInt())).thenReturn();
+        try {
+            mockMvc.perform(get(address + "/delete/1")
+                            .characterEncoding(StandardCharsets.UTF_8)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .header("X-Sharer-User-Id", 1)
+                            .accept(MediaType.APPLICATION_JSON)
+                    ).andDo(MockMvcResultHandlers.print())
+                    .andExpect(status().is(200));
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    */
+
 
 }
