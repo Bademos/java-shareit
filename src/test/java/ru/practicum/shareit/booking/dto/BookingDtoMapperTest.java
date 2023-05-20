@@ -19,8 +19,8 @@ public class BookingDtoMapperTest {
     static User userA;
     static User userB;
     static Item item;
-    final static LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
-    final static LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
+    final LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
+    final LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
     @BeforeAll
    static void setUp() {
         userA = User.builder()
@@ -58,7 +58,7 @@ public class BookingDtoMapperTest {
     }
 
     @Test
-    void BookingDtoFromBookingTest() {
+    void bookingDtoFromBookingTest() {
         Booking booking = Booking.builder()
                 .id(1)
                 .user(userA)
@@ -74,7 +74,7 @@ public class BookingDtoMapperTest {
     }
 
     @Test
-    void BookingDtoOutFromBookingTest() {
+    void bookingDtoOutFromBookingTest() {
         UserDtoOut userDtoOut = UserDtoMapper.makeUserDtoOutFromUser(userA);
         ItemDtoOut itemDtoOut = ItemDtoMapper.makeItemDtoOutFromItem(item);
         Booking booking = Booking.builder()

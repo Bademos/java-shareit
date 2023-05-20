@@ -57,7 +57,6 @@ public class ItemController {
         log.info("Got request from user with id {} to create item", userId);
         User user = serviceUsr.getById(userId);
         Item item = ItemDtoMapper.makeItemFromDto(itemDto, user);
-
         if (itemDto.getRequestId() != null ) {
             ItemRequest request = ItemRequestMapper.makeItemRequestFromDto(requestService.getRequestById(userId, itemDto.getRequestId()), user);
             item.setItemRequest(request);

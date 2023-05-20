@@ -136,7 +136,8 @@ public class ItemRequestControllerTest {
                 ).andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(200))
                 .andExpect(jsonPath("$.description", is(itemRequest.getDescription())));
-    verify(itemRequestService,times(1)).getRequestById(any(), any());    }
+    verify(itemRequestService,times(1)).getRequestById(any(), any());
+    }
 
     @Test
     void getAllByUserIdTest() throws Exception {
@@ -146,7 +147,6 @@ public class ItemRequestControllerTest {
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("X-Sharer-User-Id", 1)
                     ).andExpect(status().is(200));
-
 
                 mockMvc.perform(get(address )
                         .characterEncoding(StandardCharsets.UTF_8)

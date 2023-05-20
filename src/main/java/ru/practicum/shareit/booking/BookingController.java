@@ -57,12 +57,12 @@ public class BookingController {
     List<BookingDtoOut> getAllBookingsByUserAndState(@RequestHeader(name = "X-Sharer-User-Id") Integer userId, @RequestParam(defaultValue = "ALL") String state,
                                                      @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                      @RequestParam(defaultValue = "20") @Positive int size) {
-        from = from /size;
+        from = from / size;
         if (state.equals("UNSUPPORTED_STATUS")) {
             throw new UnknownStatusException("Unknown state: " + state);
         }
         State cState = State.getState(state);
-        System.out.println("from" + from + "size" + size );
+        System.out.println("from" + from + "size" + size);
         return bookingService.getBookingByUser(userId, cState, from, size);
     }
 
@@ -74,8 +74,7 @@ public class BookingController {
         if (from < 0) {
             throw new TimeIntervalException("oops");
         }
-
-        from = from /size;
+        from = from / size;
         log.info("Got request for all bookings by User with id:  " + userId);
 
         State cState = State.getState(state);

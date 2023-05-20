@@ -17,8 +17,9 @@ public class ItemDtoTest {
         static User userB;
         static Item item;
         static ItemDto itemDto;
-        final static LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
-        final static LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
+        final LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
+        final LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
+
         @BeforeAll
         static void setUp() {
             userA = User.builder()
@@ -38,11 +39,10 @@ public class ItemDtoTest {
                     .owner(userB)
                     .description("booring")
                     .build();
-
-
         }
+
         @Test
-        void ItemFromItemDtoTest() {
+        void itemFromItemDtoTest() {
 
             ItemDto itemDto = ItemDto.builder()
                     .id(1)
@@ -58,7 +58,7 @@ public class ItemDtoTest {
         }
 
     @Test
-    void ItemDtoFromItemTest() {
+    void itemDtoFromItemTest() {
         ItemDto itemDtoResponse = ItemDtoMapper.makeItemDto(item);
         assertEquals(item.getName(), itemDtoResponse.getName());
         assertEquals(item.getDescription(), itemDtoResponse.getDescription());

@@ -42,8 +42,8 @@ public class BookingRepositoryTest {
 
     Booking booking;
 
-    final static LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
-    final static LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
+    final LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
+    final LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
 
     @BeforeEach
     void setUp() {

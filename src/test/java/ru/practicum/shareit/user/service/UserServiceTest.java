@@ -71,7 +71,7 @@ public class UserServiceTest {
     void updateWithOutUserTest() {
         assertThrows(
                 NoSuchElementException.class,
-                () -> userService.update( userA));
+                () -> userService.update(userA));
     }
 
     @Test
@@ -126,7 +126,7 @@ public class UserServiceTest {
         assertEquals(user.getEmail(), userA.getEmail());
 
         userService.removeUser(userA.getId());
-        assertThrows(NotFoundException.class,() ->userService.getById(userA.getId()));
+        assertThrows(NotFoundException.class,() -> userService.getById(userA.getId()));
 
     }
 

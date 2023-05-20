@@ -215,7 +215,7 @@ public class ItemControllerTest {
 
     @Test
     void searchTest() {
-        when(itemService.search( anyString()))
+        when(itemService.search(anyString()))
                 .thenReturn(Collections.singletonList(item));
 
         try {
