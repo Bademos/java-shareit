@@ -83,14 +83,6 @@ public class ItemController {
         return ItemDtoMapper.makeItemDto(service.update(id, item));
     }
 
-    /*
-    @DeleteMapping("/{id}")
-    public void delete(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-                       @PathVariable int id) {
-        log.info("Got request from user with id: {} to delete item with id: {}", userId, id);
-        service.removeItem(id);
-    }*/
-
     @GetMapping("/search")
     public List<ItemDto> searchByRequest(@RequestHeader(name = "X-Sharer-User-Id") int userId,
                                          @RequestParam String text) {

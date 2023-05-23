@@ -57,9 +57,8 @@ public class ItemRequestController {
     @GetMapping("/all")
     public List<ItemRequestDto> getAllRequestsByUserByPages(@RequestHeader(name = "X-Sharer-User-Id") int userId,
                                                             @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                            @RequestParam(defaultValue = "1") @Positive int size) {
+                                                            @RequestParam(defaultValue = "10") @Positive int size) {
         log.info("Got request for all item request of User with id:{} in pages", userId);
-        from = from / size;
         return itemRequestService.getAllRequestsByPages(from, size, userId);
     }
 }

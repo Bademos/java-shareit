@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -47,10 +47,10 @@ public class BookingControllerTest {
 
     private static Booking booking;
 
-    private static BookingDtoOut bookingDto;
-    private static BookingDto bookingDt;
-    static LocalDateTime startDate =  LocalDateTime.of(2024,1,11,11,11,11);
-    static LocalDateTime endDate =  LocalDateTime.of(2024,2,22,22,22,22);
+    private  BookingDtoOut bookingDto;
+    private  BookingDto bookingDt;
+    private final static LocalDateTime startDate =  LocalDateTime.of(2024,1,11,11,11,11);
+    private final static LocalDateTime endDate =  LocalDateTime.of(2024,2,22,22,22,22);
 
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
@@ -60,8 +60,8 @@ public class BookingControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public void beforeEach() {
         address = "/bookings";
 
         booking = Booking.builder()
@@ -113,12 +113,10 @@ public class BookingControllerTest {
     }
 
     @Test
-    void updateBookingByOtherUserTest() {
+    void updateBookingByOtherUserTest() throws Exception {
         when(bookingService.updateBooking(anyInt(), anyBoolean(), anyInt()))
                 .thenThrow(NotFoundException.class);
-
-        try {
-            mockMvc.perform(patch(address + "/1")
+        mockMvc.perform(patch(address + "/1")
                             .content(mapper.writeValueAsString(bookingDt))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -126,18 +124,13 @@ public class BookingControllerTest {
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(400));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
-    void getBookingsByUserTest() {
+    void getBookingsByUserTest() throws Exception {
         when(bookingService.getBookingByUser(anyInt(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.singletonList(bookingDto));
-
-        try {
-            mockMvc.perform(get(address)
+        mockMvc.perform(get(address)
                             .content(mapper.writeValueAsString(bookingDt))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -146,9 +139,6 @@ public class BookingControllerTest {
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$", hasSize(1)));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(bookingService, times(1))
                 .getBookingByUser(anyInt(), any(), anyInt(), anyInt());
@@ -173,12 +163,11 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getBookingsByOwnerTest() {
+    void getBookingsByOwnerTest() throws Exception {
         when(bookingService.getBookingForAllItemsByUser(anyInt(), any(), anyInt(), anyInt()))
                 .thenReturn(Collections.singletonList(bookingDto));
 
-        try {
-            mockMvc.perform(get(address + "/owner")
+        mockMvc.perform(get(address + "/owner")
                             .content(mapper.writeValueAsString(bookingDt))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -187,17 +176,12 @@ public class BookingControllerTest {
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$", hasSize(1)));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         verify(bookingService, times(1))
                 .getBookingForAllItemsByUser(anyInt(), any(), anyInt(), anyInt());
     }
 
     @Test
-    void getBookingsByOwnerWithWrongLimitsTest()  {
-        try {
+    void getBookingsByOwnerWithWrongLimitsTest() throws Exception {
             mockMvc.perform(get(address + "/owner")
                             .content(mapper.writeValueAsString(bookingDt))
                             .characterEncoding(StandardCharsets.UTF_8)
@@ -208,19 +192,14 @@ public class BookingControllerTest {
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(400));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         verify(bookingService, times(0))
                 .getBookingForAllItemsByUser(anyInt(), any(), anyInt(), anyInt());
     }
 
     @Test
-    void addBookingWithIntervalErrorTest() {
+    void addBookingWithIntervalErrorTest() throws Exception {
         when(bookingService.createBooking(any(), anyInt())).thenThrow(TimeIntervalException.class);
-
-        try {
-            mockMvc.perform(post(address)
+        mockMvc.perform(post(address)
                             .content(mapper.writeValueAsString(bookingDt))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -228,20 +207,16 @@ public class BookingControllerTest {
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(400));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(bookingService, times(1)).createBooking(any(), anyInt());
     }
 
     @Test
-    void approveBookingTest() {
+    void approveBookingTest() throws Exception {
         BookingDtoOut bookingDtoOutResp = BookingDtoOut.builder()
                                         .id(1).status(BookingStatus.APPROVED).build();
         when(bookingService.updateBooking(anyInt(),anyBoolean(), anyInt())).thenReturn(bookingDtoOutResp);
-        try {
-            mockMvc.perform(patch(address + "/1")
+        mockMvc.perform(patch(address + "/1")
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-Sharer-User-Id", 1)
@@ -249,28 +224,19 @@ public class BookingControllerTest {
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         verify(bookingService, times(1)).updateBooking(anyInt(),anyBoolean(), anyInt());
     }
 
     @Test
-    void getBookingTest() {
+    void getBookingTest() throws Exception {
         when(bookingService.getBookingById(anyInt(),anyInt())).thenReturn(bookingDto);
-        try {
-            mockMvc.perform(get(address + "/1")
+        mockMvc.perform(get(address + "/1")
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-Sharer-User-Id", 1)
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
-
-
 }
 

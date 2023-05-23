@@ -1,6 +1,6 @@
 package ru.practicum.shareit.booking.dto;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -16,14 +16,14 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BookingDtoMapperTest {
-    static User userA;
-    static User userB;
-    static Item item;
-    final LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
-    final LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
+    private User userA;
+    private User userB;
+    private Item item;
+    private final static LocalDateTime startDate =  LocalDateTime.of(2023,1,1,11,11,11);
+    private final static LocalDateTime endDate =  LocalDateTime.of(2023,2,2,2,22,22);
 
-    @BeforeAll
-   static void setUp() {
+    @BeforeEach
+   public void setUp() {
         userA = User.builder()
                 .id(1)
                 .name("userA")

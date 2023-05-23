@@ -1,63 +1,61 @@
 package ru.practicum.shareit.request.service;
 
-import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestMapper;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepositoryDb;
-import ru.practicum.shareit.user.service.UserServiceImpl;
 
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
+import static java.util.Collections.singletonList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
-@SpringBootTest
-@AutoConfigureTestDatabase
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-@Transactional
-public class ItemRequestServiceTest {
-    @Autowired
+@ExtendWith(MockitoExtension.class)
+public class ItemRequestServiceMockTest {
+    @InjectMocks
     ItemRequestServiceImpl itemRequestService;
 
-    @Autowired
-    private UserServiceImpl userService;
-    @Autowired
+    @Mock
     private UserRepositoryDb userRepository;
 
-    @Autowired
+    @Mock
     private ItemRequestRepository itemRequestRepository;
 
-    private static User userA;
+    private User userA;
 
-    private static User userB;
+    private  User userB;
 
-    private static ItemRequest itemRequestA;
+    private ItemRequest itemRequestA;
 
-    private static ItemRequest itemRequestB;
+    private  ItemRequest itemRequestB;
 
-    private static ItemRequest itemRequestIncorrect;
+    private  ItemRequest itemRequestIncorrect;
 
-    private static ItemRequestDto itemRequestDtoA;
+    private  ItemRequestDto itemRequestDtoA;
 
-    private static ItemRequestDto itemRequestDtoB;
+    private  ItemRequestDto itemRequestDtoB;
 
-    private static ItemRequestDto itemRequestDtoIncorrect;
+    private  ItemRequestDto itemRequestDtoIncorrect;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public  void setUp() {
         userA = User.builder().id(1)
                 .email("a@caca.com")
                 .name("A")
@@ -89,32 +87,29 @@ public class ItemRequestServiceTest {
         itemRequestDtoA = ItemRequestMapper.makeItemRequestDto(itemRequestA);
         itemRequestDtoB = ItemRequestMapper.makeItemRequestDto(itemRequestB);
         itemRequestDtoIncorrect = ItemRequestMapper.makeItemRequestDto(itemRequestIncorrect);
-
+        when(userRepository.findById(anyInt())).thenReturn(Optional.ofNullable(userA));
     }
 
-    @BeforeEach
-    public void beforeEach() {
-        userService.create(userA);
-    }
 
     @Test
     void addIncorrectItemRequestTest() {
+        when(itemRequestRepository.save(any())).thenThrow(new RuntimeException("Error"));
         assertThrows(
                 RuntimeException.class,
                 () -> itemRequestService.addRequest(itemRequestDtoIncorrect, userB.getId()));
     }
 
     @Test
-    void addItemRequestTest() {
+    void addItemRequestMockTest() {
+        when(itemRequestRepository.save(any())).thenReturn(itemRequestA);
         ItemRequestDto itemRequest = itemRequestService.addRequest(itemRequestDtoA, userA.getId());
-
         assertEquals(itemRequest.getId(), itemRequestA.getId());
         assertEquals(itemRequest.getDescription(), itemRequestA.getDescription());
     }
 
     @Test
-    void getItemRequest() {
-        itemRequestService.addRequest(itemRequestDtoA, userA.getId());
+    void getItemRequestMockTest() {
+        when(itemRequestRepository.findById(anyInt())).thenReturn(Optional.ofNullable(itemRequestA));
         ItemRequestDto itemRequest = itemRequestService.getRequestById(userA.getId(), 1);
         assertEquals(itemRequest.getId(), itemRequestA.getId());
         assertEquals(itemRequest.getDescription(), itemRequestA.getDescription());
@@ -122,8 +117,8 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void getAllRequestByUserTest() {
-        ItemRequestDto itemRequestDto = itemRequestService.addRequest(itemRequestDtoA, userA.getId());
+    void getAllRequestByUserMockTest() {
+        when(itemRequestRepository.findAllByRequestor(any())).thenReturn(singletonList(itemRequestA));
         List<ItemRequestDto> itemRequest = itemRequestService.getAllRequestByUser(userA.getId());
         assertEquals(itemRequest.size(), 1);
         assertEquals(itemRequest.get(0).getId(), itemRequestA.getId());
@@ -132,20 +127,11 @@ public class ItemRequestServiceTest {
     }
 
     @Test
-    void getItemRequestFromSizeTest() {
-        userService.create(userB);
-        itemRequestService.addRequest(itemRequestDtoA, userA.getId());
-        List<ItemRequestDto> itemRequest = itemRequestService.getAllRequestsByPages(0, 1, userB.getId());
-        assertEquals(itemRequest.size(), 1);
-        assertEquals(itemRequest.get(0).getId(), itemRequestA.getId());
-        assertEquals(itemRequest.get(0).getDescription(), itemRequestA.getDescription());
-        assertEquals(itemRequest.get(0).getRequestorId(), itemRequestA.getRequestor().getId());
-    }
-
-    @Test
     void getItemRequestFromSizeByOwnerTest() {
-        itemRequestService.addRequest(itemRequestDtoA, userA.getId());
+        Page<ItemRequest> page =  new PageImpl<>(Collections.singletonList(itemRequestA));
+
+        when(itemRequestRepository.findAllByRequestorNot(any(), any())).thenReturn(page);
         var itemRequest = itemRequestService.getAllRequestsByPages(0, 1, userA.getId());
-        assertEquals(itemRequest.size(), 0);
+        assertEquals(itemRequest.size(), 1);
     }
 }

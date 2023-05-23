@@ -26,15 +26,15 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@RequiredArgsConstructor
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @Transactional
 public class ItemServiceTest {
     @Autowired
-    private ItemService itemService;
+    private  ItemService itemService;
 
     @Autowired
-    private UserService userService;
+    private  UserService userService;
 
     private static User userA;
 
@@ -110,7 +110,6 @@ public class ItemServiceTest {
         assertEquals(item.getId(), itemA.getId());
         assertEquals(item.getName(), itemA.getName());
         assertEquals(item.getDescription(), itemA.getDescription());
-
     }
 
     @Test

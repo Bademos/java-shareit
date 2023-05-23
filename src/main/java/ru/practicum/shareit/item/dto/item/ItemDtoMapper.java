@@ -27,17 +27,6 @@ public class ItemDtoMapper {
                 .owner(user).build();
     }
 
-    /*
-    public static Item makeItemFromDto(ItemDto itemDto, User user, ItemRequest itemRequest) {
-        return Item.builder()
-                .id(itemDto.getId())
-                .name(itemDto.getName())
-                .description(itemDto.getDescription())
-                .itemRequest(itemRequest)
-                .available(itemDto.getAvailable())
-                .owner(user).build();
-    }*/
-
     public static ItemDtoOut makeItemDtoOutFromItem(Item item) {
         return ItemDtoOut.builder()
                 .id(item.getId())

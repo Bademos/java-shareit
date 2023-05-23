@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoOut;
 import ru.practicum.shareit.booking.model.State;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.TimeIntervalException;
 import ru.practicum.shareit.exception.UnknownStatusException;
 
 import javax.validation.Valid;
@@ -23,7 +22,7 @@ import java.util.List;
 @RequestMapping(path = "/bookings")
 @Validated
 public class BookingController {
-    final BookingService bookingService;
+   private final BookingService bookingService;
 
     public BookingController(BookingService bookingServiceImpl) {
         this.bookingService = bookingServiceImpl;
@@ -55,7 +54,6 @@ public class BookingController {
     List<BookingDtoOut> getAllBookingsByUserAndState(@RequestHeader(name = "X-Sharer-User-Id") Integer userId, @RequestParam(defaultValue = "ALL") String state,
                                                      @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                      @RequestParam(defaultValue = "20") @Positive int size) {
-        from = from / size;
         if (state.equals("UNSUPPORTED_STATUS")) {
             throw new UnknownStatusException("Unknown state: " + state);
         }
@@ -71,10 +69,6 @@ public class BookingController {
                                                 @RequestParam(defaultValue = "ALL") String state,
                                                 @RequestParam(defaultValue = "0") @PositiveOrZero int from,
                                                 @RequestParam(defaultValue = "20") @Positive int size) {
-        if (from < 0) {
-            throw new TimeIntervalException("oops");
-        }
-        from = from / size;
         State cState = State.getState(state);
         String description = State.description(cState);
         log.info("Got request with status: {} ({}) for all bookings by User with id: {} ",cState, description, userId);

@@ -96,6 +96,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoOut> getBookingByUser(int userId, State state, Integer from, Integer size) {
+        from = from / size;
         getUserByIdWithCheck(userId);
         Page<Booking> res;
         switch (state) {
@@ -126,6 +127,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public List<BookingDtoOut> getBookingForAllItemsByUser(int userId, State state, Integer from, Integer size) {
+        from = from / size;
         getUserByIdWithCheck(userId);
         Page<Booking> res;
         List<Integer> itemsId = itemRepository.findAllByOwner(userRepository.findById(userId).orElseThrow())

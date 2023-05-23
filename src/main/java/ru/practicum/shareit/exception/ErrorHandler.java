@@ -20,18 +20,11 @@ import java.util.Map;
         BookingController.class})
 public class ErrorHandler {
 
-    @ExceptionHandler({NotFoundException.class})
-    public ResponseEntity<Map<String, String>> handleNotFoundException(final Exception e) {
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleNotFoundException(final NotFoundException e) {
         log.error("ID not found.", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleValidationException(final ValidationException e) {
-        log.error("Validation error.", e);
-        return new ResponseEntity<>(Map.of("message", e.getMessage()),
-                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
@@ -41,17 +34,23 @@ public class ErrorHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
-
-    @ExceptionHandler(TimeIntervalException.class)
-    public ResponseEntity<Map<String, String>> handleIllegalException(final Exception e) {
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleIllegalException(final TimeIntervalException e) {
         log.error("Incorrect conditions", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleVAlidationException(final ValidationException e) {
+        log.error("Incorrect validation", e);
+        return new ResponseEntity<>(Map.of("message", e.getMessage()),
+                HttpStatus.BAD_REQUEST);
+    }
 
-    @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, String>> handleValidException(final Exception e) {
+
+    @ExceptionHandler
+    public ResponseEntity<Map<String, String>> handleValidException(final ConstraintViolationException e) {
         log.error("We in problem", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
@@ -62,4 +61,5 @@ public class ErrorHandler {
         log.error("Unsupported status:", e);
         return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 }

@@ -88,7 +88,6 @@ public class ItemControllerTest {
                 .build();
         itemRequest = ItemRequest.builder()
                 .id(1)
-                //.requestor(User.builder().id(2).build())
                 .requestor(user)
                 .created(LocalDateTime.now())
                 .description("test")
@@ -119,15 +118,13 @@ public class ItemControllerTest {
                 .build();
 
         commentDto = CommentDtoMapper.makeCommentDto(comment);
-
     }
 
     @Test
-    void createItemTest() {
+    void createItemTest() throws Exception {
         when(itemService.create(any())).thenReturn(item);
         when(itemRequestService.getRequestById(anyInt(), anyInt())).thenReturn(itemRequestDto);
 
-        try {
             mockMvc.perform(post(address)
                             .content(mapper.writeValueAsString(itemDto))
                             .characterEncoding(StandardCharsets.UTF_8)
@@ -138,20 +135,16 @@ public class ItemControllerTest {
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$.name", is(item.getName())))
                     .andExpect(jsonPath("$.description", is(item.getDescription())));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(itemService, times(1)).create(any());
     }
 
     @Test
-    void createCommentTest() {
+    void createCommentTest() throws Exception {
         when(userService.getById(anyInt())).thenReturn(user);
         when(itemService.getById(anyInt(),anyInt())).thenReturn(ItemDtoMapper.makeItemDto(item));
         when(itemService.createComment(any(), anyInt(), anyInt())).thenReturn(comment);
 
-        try {
             mockMvc.perform(post(address + "/1/comment")
                             .content(mapper.writeValueAsString(commentDto))
                             .characterEncoding(StandardCharsets.UTF_8)
@@ -160,18 +153,13 @@ public class ItemControllerTest {
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         verify(itemService, times(1)).createComment(any(), anyInt(), anyInt());
     }
 
     @Test
-    void updateTest() {
+    void updateTest() throws Exception {
         when(itemService.update(anyInt(), any())).thenReturn(updateItem);
 
-        try {
             mockMvc.perform(patch(address + "/1")
                             .content(mapper.writeValueAsString(itemDto))
                             .characterEncoding(StandardCharsets.UTF_8)
@@ -182,18 +170,14 @@ public class ItemControllerTest {
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$.name", is(updateItem.getName())))
                     .andExpect(jsonPath("$.description", is(updateItem.getDescription())));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(itemService, times(1)).update(anyInt(), any());
     }
 
     @Test
-    void getByIdTest() {
+    void getByIdTest() throws Exception {
         when(itemService.getById(anyInt(),anyInt())).thenReturn(itemDto);
 
-        try {
             mockMvc.perform(get(address + "/1")
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -203,19 +187,15 @@ public class ItemControllerTest {
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$.name", is(item.getName())))
                     .andExpect(jsonPath("$.description", is(item.getDescription())));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(itemService, times(1)).getById(anyInt(), anyInt());
     }
 
     @Test
-    void getAllByUserTest() {
+    void getAllByUserTest() throws Exception {
         when(itemService.getAllByUser(anyInt()))
                 .thenReturn(Collections.singletonList(itemDto));
 
-        try {
             mockMvc.perform(get(address)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -224,21 +204,17 @@ public class ItemControllerTest {
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$", hasSize(1)));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(itemService, times(1))
                 .getAllByUser(anyInt());
     }
 
     @Test
-    void searchTest() {
+    void searchTest() throws Exception {
         when(itemService.search(anyString()))
                 .thenReturn(Collections.singletonList(item));
         when(itemRequestService.getRequestById(anyInt(), anyInt())).thenReturn(itemRequestDto);
 
-        try {
             mockMvc.perform(get(address + "/search")
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -248,30 +224,8 @@ public class ItemControllerTest {
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$", hasSize(1)));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(itemService, times(1))
                 .search(anyString());
     }
-/*
-    @Test
-    void deleteTest() {
-        //when(itemService.removeItem(anyInt())).thenReturn();
-        try {
-            mockMvc.perform(get(address + "/delete/1")
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-Sharer-User-Id", 1)
-                            .accept(MediaType.APPLICATION_JSON)
-                    ).andDo(MockMvcResultHandlers.print())
-                    .andExpect(status().is(200));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-    */
-
-
 }
