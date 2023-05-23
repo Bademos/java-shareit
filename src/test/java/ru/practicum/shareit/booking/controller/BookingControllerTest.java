@@ -43,12 +43,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(BookingController.class)
 
 public class BookingControllerTest {
-    private static String address;
+    private String address;
 
-    private static Booking booking;
+    private Booking booking;
 
-    private  BookingDtoOut bookingDto;
-    private  BookingDto bookingDt;
+    private BookingDtoOut bookingDto;
+    private BookingDto bookingDt;
     private final static LocalDateTime startDate =  LocalDateTime.of(2024,1,11,11,11,11);
     private final static LocalDateTime endDate =  LocalDateTime.of(2024,2,22,22,22,22);
 

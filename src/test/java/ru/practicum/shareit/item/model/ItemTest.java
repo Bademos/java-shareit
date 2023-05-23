@@ -14,7 +14,7 @@ public class ItemTest {
     private JacksonTester<Item> json;
 
     @Test
-    void Test() throws Exception {
+    void itemTest() throws Exception {
         Item item = Item.builder()
                 .id(1)
                 .name("test")
@@ -23,7 +23,6 @@ public class ItemTest {
                 .description("no description").build();
 
         JsonContent<Item> res = json.write(item);
-
 
         assertThat(res).extractingJsonPathNumberValue("$.id").isEqualTo(1);
         assertThat(res).extractingJsonPathStringValue("$.name").isEqualTo("test");
