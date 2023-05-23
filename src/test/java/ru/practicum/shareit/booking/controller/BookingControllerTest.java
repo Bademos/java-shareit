@@ -51,7 +51,6 @@ public class BookingControllerTest {
     private BookingDto bookingDt;
     private final LocalDateTime startDate =  LocalDateTime.of(2024,1,11,11,11,11);
     private final LocalDateTime endDate =  LocalDateTime.of(2024,2,22,22,22,22);
-
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @MockBean
