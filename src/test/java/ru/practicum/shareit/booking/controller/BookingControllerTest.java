@@ -44,9 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class BookingControllerTest {
     private String address;
-
     private Booking booking;
-
     private BookingDtoOut bookingDto;
     private BookingDto bookingDt;
     private final LocalDateTime startDate =  LocalDateTime.of(2024,1,11,11,11,11);
