@@ -321,7 +321,7 @@ public class BookingServiceMockTest {
     @Test
     void getAllTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByUserId(anyInt(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByUserId(anyInt(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
         List<BookingDtoOut> booking = bookingService.getBookingByUser(userB.getId(), State.ALL, 0, 1);
         assertEquals(booking.size(), 1);
         assertEquals(booking.get(0).getId(), bookingA.getId());
@@ -332,7 +332,7 @@ public class BookingServiceMockTest {
     @Test
     void getWaitingTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByUserIdAndStatus(anyInt(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByUserIdAndStatus(anyInt(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
         List<BookingDtoOut> booking = bookingService.getBookingByUser(userB.getId(), State.WAITING, 0, 1);
 
         assertEquals(booking.size(), 1);
@@ -345,7 +345,7 @@ public class BookingServiceMockTest {
     void getRejectedTest() {
         bookingDtoA.setStatus(BookingStatus.REJECTED);
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByUserIdAndStatus(anyInt(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByUserIdAndStatus(anyInt(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
         List<BookingDtoOut> booking = bookingService.getBookingByUser(userB.getId(), State.REJECTED, 0, 1);
 
         assertEquals(booking.size(), 1);
@@ -354,7 +354,7 @@ public class BookingServiceMockTest {
     @Test
     void getFutureTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByUserIdAndEndBookingAfter(anyInt(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByUserIdAndEndBookingAfter(anyInt(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingByUser(userB.getId(), State.FUTURE, 0, 1);
 
@@ -364,7 +364,7 @@ public class BookingServiceMockTest {
     @Test
     void getPastTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByUserIdAndEndBookingBefore(anyInt(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByUserIdAndEndBookingBefore(anyInt(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingByUser(userB.getId(), State.PAST, 0, 1);
 
@@ -374,7 +374,7 @@ public class BookingServiceMockTest {
     @Test
     void getCurrentTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(anyInt(),any(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(anyInt(),any(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingByUser(userB.getId(), State.CURRENT, 0, 1);
 
@@ -394,7 +394,7 @@ public class BookingServiceMockTest {
     @Test
     void getBookingsForItemsOfUserTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByItemIdIn(any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByItemIdIn(any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingForAllItemsByUser(userA.getId(), State.ALL, 0, 1);
 
@@ -407,7 +407,7 @@ public class BookingServiceMockTest {
     @Test
     void getBookingsForItemsOfUserWaitingTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByItemIdInAndStatus(any(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByItemIdInAndStatus(any(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingForAllItemsByUser(userA.getId(), State.WAITING, 0, 1);
 
@@ -420,7 +420,7 @@ public class BookingServiceMockTest {
     @Test
     void getBookingsForItemsOfUserRejectedTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByItemIdInAndStatus(any(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByItemIdInAndStatus(any(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingForAllItemsByUser(userA.getId(), State.REJECTED, 0, 1);
 
@@ -430,7 +430,7 @@ public class BookingServiceMockTest {
     @Test
     void getBookingsForItemsOfUserFutureTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByItemIdInAndEndBookingAfter(any(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByItemIdInAndEndBookingAfter(any(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingForAllItemsByUser(userA.getId(), State.FUTURE, 0, 1);
 
@@ -440,7 +440,7 @@ public class BookingServiceMockTest {
     @Test
     void getBookingsForItemsOfUserPastTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByItemIdInAndEndBookingBefore(any(),any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByItemIdInAndEndBookingBefore(any(),any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
 
         List<BookingDtoOut> booking = bookingService.getBookingForAllItemsByUser(userA.getId(), State.PAST, 0, 1);
 
@@ -450,7 +450,7 @@ public class BookingServiceMockTest {
     @Test
     void getBookingsForItemsOfUserCurrentTest() {
         when(userRepository.findById(anyInt())).thenReturn(Optional.of(userA));
-        when(bookingRepository.findAllByItemIdInAndStartBookingBeforeAndEndBookingAfter(any(),any(), any(), any())).thenReturn(new PageImpl<> (Collections.singletonList(bookingA)));
+        when(bookingRepository.findAllByItemIdInAndStartBookingBeforeAndEndBookingAfter(any(),any(), any(), any())).thenReturn(new PageImpl<>(Collections.singletonList(bookingA)));
         List<BookingDtoOut> booking = bookingService.getBookingForAllItemsByUser(userA.getId(), State.CURRENT, 0, 1);
 
         assertEquals(booking.size(), 1);

@@ -19,7 +19,6 @@ import ru.practicum.shareit.item.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepositoryDb;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepositoryDb;
-import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -143,16 +142,16 @@ public class ItemServiceMockTest {
 
     @Test
     void getByIdTest() {
-        when(bookingRepository.findTopByItemIdAndStatusAndStartBookingBefore(anyInt(), any(), any(), any())).thenReturn(Optional.ofNullable(Booking.
-                builder()
+        when(bookingRepository.findTopByItemIdAndStatusAndStartBookingBefore(anyInt(), any(), any(), any())).thenReturn(Optional.ofNullable(Booking
+                .builder()
                 .id(1)
                 .startBooking(LocalDateTime.now().minusDays(28))
                 .endBooking(LocalDateTime.now().minusDays(14))
                 .item(itemA)
                 .user(userB)
                 .build()));
-        when(bookingRepository.findTopByItemIdAndStatusAndStartBookingAfter(anyInt(), any(), any(), any())).thenReturn(Optional.ofNullable(Booking.
-                builder()
+        when(bookingRepository.findTopByItemIdAndStatusAndStartBookingAfter(anyInt(), any(), any(), any())).thenReturn(Optional.ofNullable(Booking
+                .builder()
                 .id(1)
                 .startBooking(LocalDateTime.now().plusDays(14))
                 .endBooking(LocalDateTime.now().plusDays(28))
