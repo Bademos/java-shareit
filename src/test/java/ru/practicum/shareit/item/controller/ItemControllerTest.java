@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -45,39 +45,38 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(ItemController.class)
 public class ItemControllerTest {
-    private static String address;
+    private String address;
 
-    private static Item item;
+    private Item item;
 
-    private static ItemDto itemDto;
+    private ItemDto itemDto;
 
-    private static Item updateItem;
+    private Item updateItem;
 
-    private static User user;
+    private User user;
 
-    private static Comment comment;
+    private Comment comment;
 
-    private static CommentDto commentDto;
+    private CommentDto commentDto;
 
-    private static ItemRequest itemRequest;
+    private ItemRequest itemRequest;
 
-    private static ItemRequestDto itemRequestDto;
+    private ItemRequestDto itemRequestDto;
     final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
+    @MockBean
+    private final ItemServiceImpl itemService;
 
     @MockBean
-    private ItemServiceImpl itemService;
+    private final UserServiceImpl userService;
 
     @MockBean
-    private UserServiceImpl userService;
-
-    @MockBean
-    private ItemRequestServiceImpl itemRequestService;
+    private final ItemRequestServiceImpl itemRequestService;
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public void beforeAll() {
 
         address = "/items";
 
@@ -125,7 +124,7 @@ public class ItemControllerTest {
         when(itemService.create(any())).thenReturn(item);
         when(itemRequestService.getRequestById(anyInt(), anyInt())).thenReturn(itemRequestDto);
 
-            mockMvc.perform(post(address)
+        mockMvc.perform(post(address)
                             .content(mapper.writeValueAsString(itemDto))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -145,7 +144,7 @@ public class ItemControllerTest {
         when(itemService.getById(anyInt(),anyInt())).thenReturn(ItemDtoMapper.makeItemDto(item));
         when(itemService.createComment(any(), anyInt(), anyInt())).thenReturn(comment);
 
-            mockMvc.perform(post(address + "/1/comment")
+        mockMvc.perform(post(address + "/1/comment")
                             .content(mapper.writeValueAsString(commentDto))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -160,7 +159,7 @@ public class ItemControllerTest {
     void updateTest() throws Exception {
         when(itemService.update(anyInt(), any())).thenReturn(updateItem);
 
-            mockMvc.perform(patch(address + "/1")
+        mockMvc.perform(patch(address + "/1")
                             .content(mapper.writeValueAsString(itemDto))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -178,7 +177,7 @@ public class ItemControllerTest {
     void getByIdTest() throws Exception {
         when(itemService.getById(anyInt(),anyInt())).thenReturn(itemDto);
 
-            mockMvc.perform(get(address + "/1")
+        mockMvc.perform(get(address + "/1")
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-Sharer-User-Id", 1)

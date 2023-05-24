@@ -28,4 +28,5 @@ public class ItemTest {
         assertThat(res).extractingJsonPathStringValue("$.name").isEqualTo("test");
         assertThat(res).extractingJsonPathStringValue("$.description").isEqualTo(item.getDescription());
     }
+
 }

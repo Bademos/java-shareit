@@ -2,7 +2,7 @@ package ru.practicum.shareit.request.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,7 +23,6 @@ import ru.practicum.shareit.user.controller.UserController;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -43,32 +42,29 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(MockitoExtension.class)
 @WebMvcTest(ItemRequestController.class)
 public class ItemRequestControllerTest {
-    private static String address;
-    private static User user;
+    private String address;
+    private User user;
     private static UserDto userDto;
-    private static ItemRequest itemRequest;
+    private ItemRequest itemRequest;
 
-    private static ItemRequestDto itemRequestDto;
-    private static ItemRequest itemRequestB;
+    private ItemRequestDto itemRequestDto;
+    private ItemRequest itemRequestB;
 
-    private static ItemRequestDto itemRequestDtoB;
+    private ItemRequestDto itemRequestDtoB;
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
 
     @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
     @MockBean
-    private ItemRequestServiceImpl itemRequestService;
-
-    @MockBean
-    private UserServiceImpl userService;
+    private final ItemRequestServiceImpl itemRequestService;
 
     @InjectMocks
     private UserController userController;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public  void beforeAll() {
         address = "/requests";
 
         user = User.builder().id(1)
@@ -112,15 +108,11 @@ public class ItemRequestControllerTest {
 
     @Test
     void addIncorrectItemRequestTest() throws Exception {
-        try {
             mockMvc.perform(post(address)
                     .content(mapper.writeValueAsString(itemRequestDtoB))
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("X-Sharer-User-Id", 1)
             ).andExpect(status().is(400));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
         @Test
@@ -147,7 +139,7 @@ public class ItemRequestControllerTest {
                     .header("X-Sharer-User-Id", 1)
                     ).andExpect(status().is(200));
 
-                mockMvc.perform(get(address)
+            mockMvc.perform(get(address)
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header("X-Sharer-User-Id", 1)
@@ -159,10 +151,9 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void addRequestByPagesTest() {
+    void addRequestByPagesTest() throws Exception {
         when(itemRequestService.getAllRequestsByPages(anyInt(), anyInt(), anyInt())).thenReturn(Collections.singletonList(itemRequestDto));
-        try {
-            mockMvc.perform(get(address + "/all")
+        mockMvc.perform(get(address + "/all")
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
                             .header("X-Sharer-User-Id", 1)
@@ -170,9 +161,6 @@ public class ItemRequestControllerTest {
                     ).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$.length()").value(1));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
         verify(itemRequestService,times(1)).getAllRequestsByPages(anyInt(), anyInt(), anyInt());
     }
 }

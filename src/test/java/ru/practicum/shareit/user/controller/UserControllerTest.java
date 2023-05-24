@@ -2,7 +2,7 @@ package ru.practicum.shareit.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -13,8 +13,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import ru.practicum.shareit.item.service.ItemServiceImpl;
-import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserDtoMapper;
 import ru.practicum.shareit.user.model.User;
@@ -36,31 +34,25 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
 
-    private static String address;
+    private String address;
 
-    private static User userA;
+    private User userA;
 
-    private static UserDto userDtoA;
+    private UserDto userDtoA;
 
-    private static User updateUser;
+    private User updateUser;
 
     final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
 
     @MockBean
-    private UserServiceImpl userService;
-
-    @MockBean
-    private ItemServiceImpl itemService;
-
-    @MockBean
-    private ItemRequestServiceImpl itemRequestService;
+    private final UserServiceImpl userService;
 
     @Autowired
     private MockMvc mockMvc;
 
-    @BeforeAll
-    public static void beforeAll() {
+    @BeforeEach
+    public void beforeAll() {
 
         address = "/users";
 
@@ -81,11 +73,9 @@ public class UserControllerTest {
     }
 
     @Test
-    void addUser() {
+    void addUser() throws Exception {
         when(userService.create(any())).thenReturn(userA);
-
-        try {
-            mockMvc.perform(post(address)
+        mockMvc.perform(post(address)
                             .content(mapper.writeValueAsString(userDtoA))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -94,107 +84,77 @@ public class UserControllerTest {
                     .andExpect(status().is(200))
                     .andExpect(jsonPath("$.name", is(userA.getName())))
                     .andExpect(jsonPath("$.email", is(userA.getEmail())));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         verify(userService, times(1)).create(any());
     }
 
     @Test
-    void addUserWithoutEmail() {
+    void addUserWithoutEmail() throws Exception {
         UserDto userWithoutEmail = UserDto.builder().name("user").build();
-        try {
-            mockMvc.perform(post(address)
+        mockMvc.perform(post(address)
                     .content(mapper.writeValueAsString(userWithoutEmail))
                     .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().is(400));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(userService, times(0)).create(any());
     }
 
     @Test
-    void addUserWithIncorrectEmail() {
+    void addUserWithIncorrectEmail() throws Exception {
         UserDto userWithInvalidMail = UserDto.builder()
                 .email("lib.ru").name("user").build();
 
-        try {
-            mockMvc.perform(post(address)
+        mockMvc.perform(post(address)
                     .content(mapper.writeValueAsString(userWithInvalidMail))
                     .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().is(400));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(userService, times(0)).create(any());
     }
 
     @Test
-    void updateTest() {
+    void updateTest() throws Exception {
         when(userService.update(any())).thenReturn(updateUser);
-
-        try {
-            mockMvc.perform(patch(address + "/1")
+        mockMvc.perform(patch(address + "/1")
                             .content(mapper.writeValueAsString(userDtoA))
                             .contentType(MediaType.APPLICATION_JSON)
                     ).andExpect(status().is(200))
                     .andExpect(jsonPath("$.name", is(updateUser.getName())))
                     .andExpect(jsonPath("$.email", is(updateUser.getEmail())));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(userService, times(1)).update(any());
     }
 
 
     @Test
-    void getByIdTest() {
+    void getByIdTest() throws Exception {
         when(userService.getById(anyInt())).thenReturn(userA);
 
-        try {
-            mockMvc.perform(get(address + "/1")
+        mockMvc.perform(get(address + "/1")
                             .contentType(MediaType.APPLICATION_JSON)
                     ).andExpect(status().is(200))
                     .andExpect(jsonPath("$.name", is(userA.getName())))
                     .andExpect(jsonPath("$.email", is(userA.getEmail())));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(userService, times(1)).getById(anyInt());
     }
 
 
     @Test
-    void getAllTest() {
+    void getAllTest() throws Exception {
         when(userService.getAll()).thenReturn(Collections.singletonList(userA));
 
-        try {
-            mockMvc.perform(get(address)
+        mockMvc.perform(get(address)
                     .contentType(MediaType.APPLICATION_JSON)
-            ).andExpect(status().is(200));
+        ).andExpect(status().is(200));
 
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(userService, times(1)).getAll();
     }
 
     @Test
-    void deleteUser() {
-        try {
+    void deleteUser() throws Exception {
             mockMvc.perform(delete(address + "/1")
                     .contentType(MediaType.APPLICATION_JSON)
             ).andExpect(status().is(200));
-
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }

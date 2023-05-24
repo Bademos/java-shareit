@@ -52,10 +52,10 @@ public class BookingControllerTest {
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @MockBean
-    private BookingService bookingService;
+    private final BookingService bookingService;
 
     @Autowired
-    private MockMvc mockMvc;
+    private final MockMvc mockMvc;
 
     @BeforeEach
     public void beforeEach() {
@@ -236,4 +236,3 @@ public class BookingControllerTest {
                     .andExpect(status().is(200));
     }
 }
-

@@ -24,12 +24,10 @@ public class ItemRequestDto {
     int id;
 
     @NotNull
-    String description;
-
-    Integer requestorId;
+    private String description;
+    private Integer requestorId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ConstantsShare.datePattern)
     LocalDateTime created;
-
     List<ItemDto> items;
 }

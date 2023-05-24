@@ -7,6 +7,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
+
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
@@ -16,7 +19,8 @@ public class ItemRepositoryTest {
     @Autowired
     ItemRepositoryDb itemRepository;
 
-    Item item;
+    Item itemA;
+    Item itemB;
 
     @Test
     void findById() {
@@ -26,22 +30,80 @@ public class ItemRepositoryTest {
                 .email("cur@cur.com")
                 .build();
 
-        item = Item.builder()
+        itemA = Item.builder()
                 .id(1)
                 .name("Das Ding")
                 .description("boring")
                 .available(true)
                 .owner(user)
                 .build();
-        itemRepository.save(item);
+        itemRepository.save(itemA);
 
-        Item itemResponse = itemRepository.findById(item.getId()).orElseThrow();
-        assertEquals(itemResponse.getId(), item.getId());
-        assertEquals(itemResponse.getName(), item.getName());
-        assertEquals(itemResponse.getAvailable(), item.getAvailable());
+        Item itemResponse = itemRepository.findById(itemA.getId()).orElseThrow();
+        assertEquals(itemResponse.getId(), itemA.getId());
+        assertEquals(itemResponse.getName(), itemA.getName());
+        assertEquals(itemResponse.getAvailable(), itemA.getAvailable());
         assertEquals(itemResponse.getOwner(), user);
     }
 
+    @Test
+    void findAllByOwner() {
+        User user = User.builder()
+                .id(1)
+                .name("Bademus")
+                .email("cur@cur.com")
+                .build();
 
+        itemA = Item.builder()
+                .id(1)
+                .name("Das Ding")
+                .description("boring")
+                .available(true)
+                .owner(user)
+                .build();
+        itemB = Item.builder()
+                .id(2)
+                .name("Das Ring")
+                .description("firing")
+                .available(true)
+                .owner(user)
+                .build();
+        itemRepository.save(itemA);
+        itemRepository.save(itemB);
+        List<Item> res = itemRepository.findAllByOwner(user);
+        assertEquals(2,res.size());
+    }
 
+    @Test
+    void deleteTest() {
+        User user = User.builder()
+                .id(1)
+                .name("Bademus")
+                .email("cur@cur.com")
+                .build();
+
+        itemA = Item.builder()
+                .id(1)
+                .name("Das Ding")
+                .description("boring")
+                .available(true)
+                .owner(user)
+                .build();
+        itemB = Item.builder()
+                .id(2)
+                .name("Das Ring")
+                .description("firing")
+                .available(true)
+                .owner(user)
+                .build();
+        itemRepository.save(itemA);
+        itemRepository.save(itemB);
+        List<Item> res = itemRepository.findAllByOwner(user);
+        assertEquals(2,res.size());
+
+        itemRepository.delete(itemB);
+
+        res = itemRepository.findAllByOwner(user);
+        assertEquals(1,res.size());
+    }
 }

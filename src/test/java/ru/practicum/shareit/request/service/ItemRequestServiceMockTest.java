@@ -55,7 +55,7 @@ public class ItemRequestServiceMockTest {
     private  ItemRequestDto itemRequestDtoIncorrect;
 
     @BeforeEach
-    public  void setUp() {
+    public void setUp() {
         userA = User.builder().id(1)
                 .email("a@caca.com")
                 .name("A")

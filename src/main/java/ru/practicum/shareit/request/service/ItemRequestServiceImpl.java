@@ -13,8 +13,6 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.request.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepositoryDb;
-import ru.practicum.shareit.user.service.UserService;
-import ru.practicum.shareit.user.service.UserServiceImpl;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,17 +24,14 @@ import java.util.stream.Collectors;
 public class ItemRequestServiceImpl implements ItemRequestService {
     ItemRequestRepository requestRepository;
     UserRepositoryDb userRepository;
-    UserService userService;
 
-    public ItemRequestServiceImpl(ItemRequestRepository requestRepository, UserRepositoryDb userRepository, UserServiceImpl userService) {
+    public ItemRequestServiceImpl(ItemRequestRepository requestRepository, UserRepositoryDb userRepository) {
         this.requestRepository = requestRepository;
         this.userRepository = userRepository;
-        this.userService = userService;
     }
 
     @Override
     public ItemRequestDto addRequest(ItemRequestDto itemRequestDto, Integer userId) {
-        //User user = userService.getById(userId);
         User user = getAndCheckUser(userId);
         ItemRequest itemRequest = ItemRequestMapper.makeItemRequestFromDto(itemRequestDto, user);
         itemRequest.toBuilder().created(LocalDateTime.now());

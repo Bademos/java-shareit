@@ -54,6 +54,7 @@ public class BookingRepositoryTest {
 
     final LocalDateTime startDate = LocalDateTime.of(2023, 1, 1, 11, 11, 11);
     final LocalDateTime endDate = LocalDateTime.of(2023, 2, 2, 2, 22, 22);
+    final LocalDateTime now = LocalDateTime.now();
 
     @BeforeEach
     void setUp() {
@@ -75,7 +76,7 @@ public class BookingRepositoryTest {
                 .description("booring")
                 .build();
         itemB = Item.builder()
-                .id(1)
+                .id(2)
                 .name("itemB")
                 .available(Boolean.TRUE)
                 .owner(userA)
@@ -89,31 +90,31 @@ public class BookingRepositoryTest {
                 .startBooking(startDate)
                 .endBooking(endDate).build();
         bookingB = Booking.builder()
-                .id(1)
+                .id(2)
                 .user(userB)
                 .item(itemB)
                 .status(BookingStatus.REQUESTED)
-                .startBooking(LocalDateTime.now().plusDays(2))
-                .endBooking(LocalDateTime.now().plusDays(4)).build();
+                .startBooking(now.plusDays(2))
+                .endBooking(now.plusDays(4)).build();
         bookingC = Booking.builder()
-                .startBooking(LocalDateTime.now().minusMonths(12))
-                .endBooking(LocalDateTime.now().minusMonths(10))
+                .startBooking(now.minusMonths(12))
+                .endBooking(now.minusMonths(10))
                 .user(userA)
                 .item(itemB)
                 .status(BookingStatus.APPROVED)
                 .id(3).build();
 
         bookingD = Booking.builder()
-                .startBooking(LocalDateTime.now().minusMonths(9))
-                .endBooking(LocalDateTime.now().minusMonths(8))
+                .startBooking(now.minusMonths(9))
+                .endBooking(now.minusMonths(8))
                 .user(userA)
                 .item(itemB)
                 .status(BookingStatus.APPROVED)
                 .id(4).build();
 
         bookingE = Booking.builder()
-                .startBooking(LocalDateTime.now().minusMonths(7))
-                .endBooking(LocalDateTime.now().minusMonths(6))
+                .startBooking(now.minusMonths(7))
+                .endBooking(now.minusMonths(6))
                 .user(userA)
                 .item(itemB)
                 .status(BookingStatus.APPROVED)
@@ -135,23 +136,28 @@ public class BookingRepositoryTest {
     void findAllTest() {
 
         List<Booking> bookings = bookingRepository.findAll();
-        assertEquals(bookings.get(0).getUser(), userB);
-        assertEquals(bookings.get(0).getItem().getOwner(), userA);
+        assertEquals(bookings.get(0).getUser(), userA);
+        assertEquals(bookings.get(0).getItem().getOwner(), userB);
     }
 
 
     @Test
     void findBookingsLastTest() {
 
-        List<Integer> ids = Collections.singletonList(1);
+        List<Integer> ids = Collections.singletonList(2);
 
 
-        List<Booking> last = bookingRepository.findBookingsLast(ids,
+        List<Booking> lst = bookingRepository.findBookingsLast(ids,
                 LocalDateTime.now(),
                 userA.getId(), PageRequest.of(0, 1)
         );
-        assertEquals(last.size(), 1);
-
+        assertEquals(lst.get(0).getId(), bookingE.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingE.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingE.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingE.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingE.getUser());
+        assertEquals(lst.get(0).getItem(), bookingE.getItem());
+        assertEquals(lst.get(0).getId(), 5);
     }
 
     @Test
@@ -170,13 +176,21 @@ public class BookingRepositoryTest {
         bookingRepository.save(bookingD);
         bookingRepository.save(bookingE);
 
-        List<Integer> ids = Collections.singletonList(1);
+        List<Integer> ids = Collections.singletonList(2);
 
 
         List<Booking> next = bookingRepository.findBookingsNext(ids,
                 LocalDateTime.now(),
                 userA.getId(), PageRequest.of(0, 1)
         );
+
+        assertEquals(next.get(0).getId(), bookingE.getId());
+        assertEquals(next.get(0).getEndBooking(), bookingE.getEndBooking());
+        assertEquals(next.get(0).getStartBooking(), bookingE.getStartBooking());
+        assertEquals(next.get(0).getStatus(), bookingE.getStatus());
+        assertEquals(next.get(0).getUser(), bookingE.getUser());
+        assertEquals(next.get(0).getItem(), bookingE.getItem());
+
         assertEquals(next.size(), 1);
     }
 
@@ -185,6 +199,13 @@ public class BookingRepositoryTest {
         Page<Booking> page = bookingRepository.findAllByUserIdAndStatus(2, BookingStatus.REQUESTED, PageRequest.of(0, 2));
 
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), 2);
+        assertEquals(lst.get(0).getId(), bookingB.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingB.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingB.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingB.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingB.getUser());
+        assertEquals(lst.get(0).getItem(), bookingB.getItem());
         assertEquals(lst.size(), 1);
     }
 
@@ -193,6 +214,13 @@ public class BookingRepositoryTest {
         Page<Booking> page = bookingRepository.findAllByUserIdAndEndBookingAfter(2, LocalDateTime.now(), PageRequest.of(0, 2));
 
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), 2);
+        assertEquals(lst.get(0).getId(), bookingB.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingB.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingB.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingB.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingB.getUser());
+        assertEquals(lst.get(0).getItem(), bookingB.getItem());
         assertEquals(lst.size(), 1);
     }
 
@@ -201,6 +229,13 @@ public class BookingRepositoryTest {
         Page<Booking> page = bookingRepository.findAllByUserIdAndEndBookingBefore(1, LocalDateTime.now(), PageRequest.of(0, 2));
 
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), bookingA.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingA.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingA.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingA.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingA.getUser());
+        assertEquals(lst.get(0).getItem(), bookingA.getItem());
+        assertEquals(lst.get(0).getId(), 1);
         assertEquals(lst.size(), 2);
     }
 
@@ -208,6 +243,13 @@ public class BookingRepositoryTest {
     void findAllByUserIdAndStartBookingBeforeAndEndBookingAfterTest() {
         Page<Booking> page = bookingRepository.findAllByUserIdAndStartBookingBeforeAndEndBookingAfter(1, LocalDateTime.now().minusMonths(9), LocalDateTime.now().minusMonths(8).minusDays(1), PageRequest.of(0, 2));
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), bookingD.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingD.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingD.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingD.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingD.getUser());
+        assertEquals(lst.get(0).getItem(), bookingD.getItem());
+        assertEquals(lst.get(0).getId(), 4);
         assertEquals(lst.size(), 1);
     }
 
@@ -216,6 +258,7 @@ public class BookingRepositoryTest {
         List<Integer> ids = Arrays.asList(1, 2);
         Page<Booking> page = bookingRepository.findAllByItemIdIn(ids, PageRequest.of(0, 2));
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), 1);
         assertEquals(lst.size(), 2);
     }
 
@@ -224,6 +267,13 @@ public class BookingRepositoryTest {
         List<Integer> ids = Arrays.asList(1, 2);
         Page<Booking> page = bookingRepository.findAllByItemIdInAndEndBookingBefore(ids, LocalDateTime.now(), PageRequest.of(0, 2));
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), bookingA.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingA.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingA.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingA.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingA.getUser());
+        assertEquals(lst.get(0).getItem(), bookingA.getItem());
+        assertEquals(lst.get(0).getId(), 1);
         assertEquals(lst.size(), 2);
     }
 
@@ -232,6 +282,13 @@ public class BookingRepositoryTest {
         List<Integer> ids = Arrays.asList(1, 2);
         Page<Booking> page = bookingRepository.findAllByItemIdInAndEndBookingAfter(ids, LocalDateTime.now(), PageRequest.of(0, 2));
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), 2);
+        assertEquals(lst.get(0).getId(), bookingB.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingB.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingB.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingB.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingB.getUser());
+        assertEquals(lst.get(0).getItem(), bookingB.getItem());
         assertEquals(lst.size(), 1);
     }
 
@@ -243,23 +300,37 @@ public class BookingRepositoryTest {
                 LocalDateTime.now().minusMonths(8).minusHours(4),
                 PageRequest.of(0, 2));
         List<Booking> lst = page.stream().collect(Collectors.toList());
+        assertEquals(lst.get(0).getId(), bookingD.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingD.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingD.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingD.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingD.getUser());
+        assertEquals(lst.get(0).getItem(), bookingD.getItem());
+        assertEquals(lst.get(0).getId(), 4);
         assertEquals(lst.size(), 1);
     }
 
     @Test
     void findBookingByItemIdAndUserIdAndEndBookingBeforeAndStatusTest() {
-        List<Booking> lst = bookingRepository.findBookingByItemIdAndUserIdAndEndBookingBeforeAndStatus(1,
+        List<Booking> lst = bookingRepository.findBookingByItemIdAndUserIdAndEndBookingBeforeAndStatus(2,
                 1,
                 LocalDateTime.now(),
                 BookingStatus.APPROVED);
+        assertEquals(lst.get(0).getId(), bookingC.getId());
+        assertEquals(lst.get(0).getEndBooking(), bookingC.getEndBooking());
+        assertEquals(lst.get(0).getStartBooking(), bookingC.getStartBooking());
+        assertEquals(lst.get(0).getStatus(), bookingC.getStatus());
+        assertEquals(lst.get(0).getUser(), bookingC.getUser());
+        assertEquals(lst.get(0).getItem(), bookingC.getItem());
+        assertEquals(lst.get(0).getId(), 3);
         assertEquals(lst.size(), 3);
     }
 
     @Test
     void findTopByItemIdAndStatusAndStartBookingBeforeTest() {
-        Booking booking = bookingRepository.findTopByItemIdAndStatusAndStartBookingBefore(1,
+        Booking booking = bookingRepository.findTopByItemIdAndStatusAndStartBookingBefore(2,
                 BookingStatus.APPROVED,
-                LocalDateTime.now().plusMonths(5),
+                LocalDateTime.now(),
                 ConstantsShare.sortDesc).orElse(null);
         assert booking != null;
         assertEquals(booking.getStartBooking(), bookingE.getStartBooking());
@@ -271,9 +342,9 @@ public class BookingRepositoryTest {
         bookingE.setEndBooking(LocalDateTime.now().plusMonths(3600));
         bookingRepository.save(bookingE);
 
-        Booking booking = bookingRepository.findTopByItemIdAndStatusAndStartBookingAfter(1,
+        Booking booking = bookingRepository.findTopByItemIdAndStatusAndStartBookingAfter(2,
                 BookingStatus.APPROVED,
-                LocalDateTime.now().plusMonths(1),
+                LocalDateTime.now().minusMonths(10),
                 ConstantsShare.sortDesc).orElse(null);
         assert booking != null;
         assertEquals(booking.getStartBooking(), bookingE.getStartBooking());

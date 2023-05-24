@@ -57,8 +57,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleUnknownStatusException(final UnknownStatusException e) {
-        log.error("Unsupported status:", e);
+    public ResponseEntity<Map<String, String>> handleUnknownStatusException(final Error e) {
+        log.error("InternAlServeError", e);
         return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
