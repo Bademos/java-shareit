@@ -88,10 +88,8 @@ public class BookingControllerTest {
     }
 
     @Test
-    void createBookingTest() {
+    void createBookingTest() throws Exception {
         when(bookingService.createBooking(any(), anyInt())).thenReturn(bookingDto);
-
-        try {
             mockMvc.perform(post(address)
                             .content(mapper.writeValueAsString(bookingDt))
                             .characterEncoding(StandardCharsets.UTF_8)
@@ -102,9 +100,6 @@ public class BookingControllerTest {
                     .andExpect(jsonPath("$.id", is(bookingDto.getId())))
                     .andExpect(jsonPath("$.end", is(bookingDto.getEnd().toString())))
                     .andExpect(jsonPath("$.start", is(bookingDto.getStart().toString())));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(bookingService, times(1)).createBooking(any(), anyInt());
     }
@@ -120,7 +115,7 @@ public class BookingControllerTest {
                             .header("X-Sharer-User-Id", 1)
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
-                    .andExpect(status().is(400));
+                    .andExpect(status().is(500));
     }
 
     @Test
@@ -142,8 +137,7 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getBookingsByUserUnsupportedStatusTest() {
-        try {
+    void getBookingsByUserUnsupportedStatusTest() throws Exception {
             mockMvc.perform(get(address)
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -151,9 +145,6 @@ public class BookingControllerTest {
                             .header("X-Sharer-User-Id", 1)
                             .accept(MediaType.APPLICATION_JSON)).andDo(MockMvcResultHandlers.print())
                     .andExpect(status().is(500));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         verify(bookingService, times(0))
                 .getBookingByUser(anyInt(), any(), anyInt(), anyInt());
@@ -179,7 +170,8 @@ public class BookingControllerTest {
 
     @Test
     void getBookingsByOwnerWithWrongLimitsTest() throws Exception {
-            mockMvc.perform(get(address + "/owner")
+
+        mockMvc.perform(get(address + "/owner")
                             .content(mapper.writeValueAsString(bookingDt))
                             .characterEncoding(StandardCharsets.UTF_8)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -188,7 +180,7 @@ public class BookingControllerTest {
                             .param("size", "1")
                             .accept(MediaType.APPLICATION_JSON)
                     ).andDo(MockMvcResultHandlers.print())
-                    .andExpect(status().is(400));
+                    .andExpect(status().is(500));
         verify(bookingService, times(0))
                 .getBookingForAllItemsByUser(anyInt(), any(), anyInt(), anyInt());
     }

@@ -21,13 +21,13 @@ import java.util.List;
 @NoArgsConstructor
 @Builder(toBuilder = true)
 public class ItemRequestDto {
-    int id;
+    private int id;
 
     @NotNull
     private String description;
     private Integer requestorId;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ConstantsShare.datePattern)
-    LocalDateTime created;
-    List<ItemDto> items;
+    private LocalDateTime created;
+    private List<ItemDto> items;
 }

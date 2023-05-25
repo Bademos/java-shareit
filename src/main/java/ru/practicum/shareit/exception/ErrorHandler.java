@@ -3,14 +3,13 @@ package ru.practicum.shareit.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.booking.controller.BookingController;
 import ru.practicum.shareit.item.controller.ItemController;
 import ru.practicum.shareit.request.controller.ItemRequestController;
 import ru.practicum.shareit.user.controller.UserController;
-
-import javax.validation.ConstraintViolationException;
 import java.util.Map;
 
 @Slf4j
@@ -18,6 +17,7 @@ import java.util.Map;
         ItemController.class,
         ItemRequestController.class,
         BookingController.class})
+
 public class ErrorHandler {
 
     @ExceptionHandler
@@ -42,24 +42,22 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleVAlidationException(final ValidationException e) {
+    public ResponseEntity<Map<String, String>> handleValidationException(final ValidationException e) {
         log.error("Incorrect validation", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
-
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleValidException(final ConstraintViolationException e) {
-        log.error("We in problem", e);
+    public ResponseEntity<Map<String, String>> handleValidException(final MethodArgumentNotValidException e) {
+        log.error("Entity dos not pass inner validation", e);
         return new ResponseEntity<>(Map.of("message", e.getMessage()),
                 HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<Map<String, String>> handleUnknownStatusException(final Error e) {
+    public ResponseEntity<Map<String, String>> handleUnknownException(final Throwable e) {
         log.error("InternAlServeError", e);
         return new ResponseEntity<>(Map.of("error", e.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 }
