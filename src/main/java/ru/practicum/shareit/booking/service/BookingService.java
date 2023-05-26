@@ -13,7 +13,7 @@ public interface BookingService {
 
     public BookingDtoOut getBookingById(int bookingId, int userId);
 
-    public List<BookingDtoOut> getBookingByUser(int userId, State state);
+    public List<BookingDtoOut> getBookingByUser(int userId, State state, Integer from, Integer size);
 
-    public List<BookingDtoOut> getBookingForAllItemsByUser(int userId, State state);
+    public List<BookingDtoOut> getBookingForAllItemsByUser(int userId, State state, Integer from, Integer size);
 }

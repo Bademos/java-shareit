@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.dto.comment.CommentDto;
 import ru.practicum.shareit.item.dto.comment.CommentDtoMapper;
@@ -9,6 +10,9 @@ import ru.practicum.shareit.item.dto.item.ItemDtoMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.item.service.ItemServiceImpl;
+import ru.practicum.shareit.request.dto.ItemRequestMapper;
+import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.service.UserServiceImpl;
@@ -24,14 +28,17 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/items")
 @Slf4j
+@Validated
 public class ItemController {
 
     private final ItemService service;
     private final UserService serviceUsr;
+    private final ItemRequestService requestService;
 
-    public ItemController(ItemServiceImpl service, UserServiceImpl serviceUsr) {
+    public ItemController(ItemServiceImpl service, UserServiceImpl serviceUsr, ItemRequestService requestService) {
         this.service = service;
         this.serviceUsr = serviceUsr;
+        this.requestService = requestService;
     }
 
     @GetMapping
@@ -52,6 +59,10 @@ public class ItemController {
         log.info("Got request from user with id {} to create item", userId);
         User user = serviceUsr.getById(userId);
         Item item = ItemDtoMapper.makeItemFromDto(itemDto, user);
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = ItemRequestMapper.makeItemRequestFromDto(requestService.getRequestById(userId, itemDto.getRequestId()), user);
+            item.setItemRequest(request);
+        }
         Item itemCreated = service.create(item);
         return ItemDtoMapper.makeItemDto(itemCreated);
     }
@@ -72,13 +83,6 @@ public class ItemController {
         User user = serviceUsr.getById(userId);
         Item item = ItemDtoMapper.makeItemFromDto(itemDto, user);
         return ItemDtoMapper.makeItemDto(service.update(id, item));
-    }
-
-    @DeleteMapping("/{id}")
-    public void delete(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-                       @PathVariable int id) {
-        log.info("Got request from user with id: {} to delete item with id: {}", userId, id);
-        service.removeItem(id);
     }
 
     @GetMapping("/search")

@@ -21,15 +21,16 @@ import java.util.List;
 public class ItemDto {
     private int id;
     @NotBlank
-    public String name;
+    private String name;
     @NotNull
-    public String description;
+    private String description;
     @NotNull
-    public Boolean available;
+    private Boolean available;
 
-    public BookingDtoForItem lastBooking;
+    private Integer requestId;
+    private BookingDtoForItem lastBooking;
 
-    public BookingDtoForItem nextBooking;
+    private BookingDtoForItem nextBooking;
 
-    public List<CommentDto> comments;
+    private List<CommentDto> comments;
 }
