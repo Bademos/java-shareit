@@ -4,15 +4,11 @@ import lombok.AccessLevel;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.service.ItemRequestService;
 import ru.practicum.shareit.request.service.ItemRequestServiceImpl;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.PositiveOrZero;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,7 +19,6 @@ import java.util.List;
 @RestController
 @RequestMapping(path = "/requests")
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-@Validated
 public class ItemRequestController {
     ItemRequestService itemRequestService;
 
@@ -34,7 +29,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto createItemRequest(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-                                            @Valid @RequestBody ItemRequestDto itemRequest) {
+                                             @RequestBody ItemRequestDto itemRequest) {
         log.info("Got Item Request");
         itemRequest = itemRequest.toBuilder().created(LocalDateTime.now()).build();
         return itemRequestService.addRequest(itemRequest, userId);
@@ -56,8 +51,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> getAllRequestsByUserByPages(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-                                                            @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-                                                            @RequestParam(defaultValue = "10") @Positive int size) {
+                                                            @RequestParam(defaultValue = "0") int from,
+                                                            @RequestParam(defaultValue = "10") int size) {
         log.info("Got request for all item request of User with id:{} in pages", userId);
         return itemRequestService.getAllRequestsByPages(from, size, userId);
     }

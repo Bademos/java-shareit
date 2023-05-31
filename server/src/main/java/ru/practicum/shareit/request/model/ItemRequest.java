@@ -8,8 +8,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.util.ConstantsShare;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -27,12 +26,10 @@ import java.util.List;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ItemRequest {
-    @NotNull
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int id;
 
-    @NotBlank
     String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)

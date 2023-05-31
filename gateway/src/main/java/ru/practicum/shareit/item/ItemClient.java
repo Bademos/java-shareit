@@ -28,8 +28,9 @@ public class ItemClient extends BaseClient {
     }
 
     public ResponseEntity<Object> create(long userId, ItemDto item) {
-        return post("", userId,item);
+        return post("", userId, item);
     }
+
     public ResponseEntity<Object> getById(long userId, int id) {
         return get("/" + id, userId);
     }
@@ -43,8 +44,9 @@ public class ItemClient extends BaseClient {
                 "from", from,
                 "size", size
         );
-        return get("?from={from}&size={size}",userId, parameters);
+        return get("?from={from}&size={size}", userId, parameters);
     }
+
     public ResponseEntity<Object> searchItems(long userId, String text, int from, int size) {
         Map<String, Object> parameters = Map.of(
                 "text", text,

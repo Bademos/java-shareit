@@ -20,45 +20,55 @@ import java.util.Collections;
 @Slf4j
 @Validated
 public class ItemController {
-	private final ItemClient itemClient;
-
-	@GetMapping ("/{id}")
-	public ResponseEntity<Object> getById(@PathVariable int id, @RequestHeader("X-Sharer-User-Id") long userId) {
-		log.info("Got request for user with id:{}", id);
-		return itemClient.getById(userId, id);
-	}
-
-	@PostMapping
-	public ResponseEntity<Object> create(@RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") long useId ) {
-		return itemClient.create(useId, item);
-	}
-
-	@PatchMapping("/{id}")
-	public ResponseEntity<Object> update(@RequestBody ItemDto item, @PathVariable int id,@RequestHeader("X-Sharer-User-Id") long userId ) {
-		return itemClient.update(id, userId, item);
-	}
+    private final ItemClient itemClient;
 
 
-	@PostMapping("/{id}/comment")
-	public ResponseEntity<Object>  createComment(@PathVariable int id,
-									@Valid @RequestBody CommentDto commentDto,
-									@RequestHeader(name = "X-Sharer-User-Id") int userId) {
-		log.info("Got request from user with id {} to create comment for item with id {}", userId, id);
-		return itemClient.createComment(userId, id, commentDto);
-	}
+    @GetMapping("/{id}")
+    public ResponseEntity<Object> getById(@PathVariable int id, @RequestHeader("X-Sharer-User-Id") long userId) {
+        log.info("Got request for user with id:{}", id);
+        return itemClient.getById(userId, id);
+    }
 
-	@GetMapping("/search")
-	public ResponseEntity<Object>  searchByRequest(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-										 			@RequestParam String text,
-												   @RequestParam(defaultValue = "0") @PositiveOrZero int from,
-												   @RequestParam(defaultValue = "10") @Positive int size) {
+    @PostMapping
+    public ResponseEntity<Object> create(@Valid @RequestBody ItemDto item, @RequestHeader("X-Sharer-User-Id") long useId) {
+        return itemClient.create(useId, item);
+    }
 
-		log.info("Got request from user with id: {} to search items contains the text: {}", userId, text);
-		if (text.isBlank()) {
-			return ResponseEntity.ok(Collections.emptyList());
-		}
-		return itemClient.searchItems(userId,text,from,size);
-	}
+    @PatchMapping("/{id}")
+    public ResponseEntity<Object> update(@RequestBody ItemDto item, @PathVariable int id, @RequestHeader("X-Sharer-User-Id") long userId) {
+        return itemClient.update(id, userId, item);
+    }
+
+
+    @PostMapping("/{id}/comment")
+    public ResponseEntity<Object> createComment(@PathVariable int id,
+                                                @Valid @RequestBody CommentDto commentDto,
+                                                @RequestHeader(name = "X-Sharer-User-Id") int userId) {
+        log.info("Got request from user with id {} to create comment for item with id {}", userId, id);
+        return itemClient.createComment(userId, id, commentDto);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<Object> searchByRequest(@RequestHeader(name = "X-Sharer-User-Id") int userId,
+                                                  @RequestParam String text,
+                                                  @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                                  @RequestParam(defaultValue = "10") @Positive int size) {
+
+        log.info("Got request from user with id: {} to search items contains the text: {}", userId, text);
+        if (text.isBlank()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
+        return itemClient.searchItems(userId, text, from, size);
+    }
+
+    @GetMapping
+    public ResponseEntity<Object> getAll(@RequestHeader(name = "X-Sharer-User-Id") long userId,
+                                         @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+                                         @RequestParam(defaultValue = "10") @Positive int size) {
+        log.info("Got request for all users");
+
+        return itemClient.getAllByUser(userId, from, size);
+    }
 
 
 }

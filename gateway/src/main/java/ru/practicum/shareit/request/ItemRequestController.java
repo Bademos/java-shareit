@@ -22,18 +22,18 @@ public class ItemRequestController {
 	private final ItemRequestClient itemRequestClient;
 
 	@PostMapping
-	public ResponseEntity<Object>  createItemRequest(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-											@Valid @RequestBody ItemRequestDto itemRequest) {
+	public ResponseEntity<Object> createItemRequest(@RequestHeader(name = "X-Sharer-User-Id") int userId,
+													@Valid @RequestBody ItemRequestDto itemRequest) {
 		log.info("Got Item Request");
 		return itemRequestClient.create(userId, itemRequest);
 
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Object>  getRequestById(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-										 @PathVariable int id) {
+	public ResponseEntity<Object> getRequestById(@RequestHeader(name = "X-Sharer-User-Id") int userId,
+												 @PathVariable int id) {
 		log.info("Got request for item request");
-		return itemRequestClient.getById(userId, id);
+		return itemRequestClient.getById(id, userId);
 	}
 
 	@GetMapping()
@@ -43,12 +43,10 @@ public class ItemRequestController {
 	}
 
 	@GetMapping("/all")
-	public ResponseEntity<Object>  getAllRequestsByUserByPages(@RequestHeader(name = "X-Sharer-User-Id") int userId,
-															@RequestParam(defaultValue = "0") @PositiveOrZero int from,
-															@RequestParam(defaultValue = "10") @Positive int size) {
+	public ResponseEntity<Object> getAllRequestsByUserByPages(@RequestHeader(name = "X-Sharer-User-Id") int userId,
+															  @RequestParam(defaultValue = "0") @PositiveOrZero int from,
+															  @RequestParam(defaultValue = "10") @Positive int size) {
 		log.info("Got request for all item request of User with id:{} in pages", userId);
-		return itemRequestClient.getByPage(from, size, userId);
+		return itemRequestClient.getByPage(userId, from, size);
 	}
-
-
 }

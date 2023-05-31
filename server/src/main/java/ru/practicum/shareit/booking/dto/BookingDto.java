@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.user.model.User;
 
-import javax.validation.constraints.FutureOrPresent;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -26,13 +24,9 @@ public class BookingDto {
     private User user;
     private Integer itemId;
 
-    @NotNull
-    @FutureOrPresent
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = datePattern)
     private LocalDateTime start;
 
-    @NotNull
-    @FutureOrPresent
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = datePattern)
     private LocalDateTime end;
 

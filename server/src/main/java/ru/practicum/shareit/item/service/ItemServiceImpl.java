@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllByUser(int userId) {
         User owner = getUserByIdWithCheck(userId);
-        List<ItemDto> items = itemRepository.findAllByOwner(owner).stream()
+        List<ItemDto> items = itemRepository.findByOwnerOrderByIdAsc(owner).stream()
                 .map(ItemDtoMapper::makeItemDto).collect(Collectors.toList());
 
         List<Integer> itemIds = items.stream().map(ItemDto::getId).collect(Collectors.toList());

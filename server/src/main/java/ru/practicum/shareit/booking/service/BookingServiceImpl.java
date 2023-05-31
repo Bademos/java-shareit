@@ -130,7 +130,7 @@ public class BookingServiceImpl implements BookingService {
         from = from / size;
         getUserByIdWithCheck(userId);
         Page<Booking> res;
-        List<Integer> itemsId = itemRepository.findAllByOwner(userRepository.findById(userId).orElseThrow())
+        List<Integer> itemsId = itemRepository.findByOwnerOrderByIdAsc(userRepository.findById(userId).orElseThrow())
                     .stream().map(Item::getId).collect(Collectors.toList());
             switch (state) {
                 case ALL:

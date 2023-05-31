@@ -36,11 +36,10 @@ public class UserClient extends BaseClient {
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
-
-
     public ResponseEntity<Object> create(UserDto user) {
         return post("", user);
     }
+
     public ResponseEntity<Object> getById(Long id) {
         return get("/" + id);
     }
@@ -56,5 +55,5 @@ public class UserClient extends BaseClient {
     public ResponseEntity<Object> delete(Long id) {
         return delete("/" + id);
     }
-    }
+}
 

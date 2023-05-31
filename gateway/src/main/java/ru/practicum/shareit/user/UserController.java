@@ -32,20 +32,20 @@ public class UserController {
 	}
 
 	@PostMapping
-	public ResponseEntity<Object>  createUser(@Valid @RequestBody UserDto userDto) {
+	public ResponseEntity<Object> createUser(@Valid @RequestBody UserDto userDto) {
 		log.info("Got request to create new user");
 		return userClient.create(userDto);
 	}
 
 	@PatchMapping("/{id}")
-	public ResponseEntity<Object>  updateUser(@RequestBody UserDto userDto, @PathVariable Long id) {
+	public ResponseEntity<Object> updateUser(@RequestBody UserDto userDto, @PathVariable Long id) {
 		log.info("Got request for user with id:{}", id);
-		return userClient.update(id,userDto);
+		return userClient.update(id, userDto);
 	}
 
 	@DeleteMapping("/{id}")
-	public void deleteUser(@PathVariable Long id) {
+	public ResponseEntity<Object> deleteUser(@PathVariable Long id) {
 		log.info("Got request to delete user with id:{}", id);
+		return userClient.delete(id);
 	}
-
 }

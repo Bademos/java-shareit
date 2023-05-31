@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 import ru.practicum.shareit.user.service.UserServiceImpl;
 
-import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -54,7 +53,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto createItem(@Valid @RequestBody ItemDto itemDto,
+    public ItemDto createItem( @RequestBody ItemDto itemDto,
                               @RequestHeader(name = "X-Sharer-User-Id") int userId) {
         log.info("Got request from user with id {} to create item", userId);
         User user = serviceUsr.getById(userId);
@@ -69,7 +68,7 @@ public class ItemController {
 
     @PostMapping("/{id}/comment")
     public CommentDto createComment(@PathVariable int id,
-                                    @Valid @RequestBody CommentDto commentDto,
+                                    @RequestBody CommentDto commentDto,
                                     @RequestHeader(name = "X-Sharer-User-Id") int userId) {
         log.info("Got request from user with id {} to create comment for item with id {}", userId, id);
         return CommentDtoMapper.makeCommentDto(service.createComment(commentDto, userId, id));
