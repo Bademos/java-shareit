@@ -53,7 +53,7 @@ public class ItemController {
     }
 
     @PostMapping
-    public ItemDto createItem( @RequestBody ItemDto itemDto,
+    public ItemDto createItem(@RequestBody ItemDto itemDto,
                               @RequestHeader(name = "X-Sharer-User-Id") int userId) {
         log.info("Got request from user with id {} to create item", userId);
         User user = serviceUsr.getById(userId);

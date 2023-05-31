@@ -9,5 +9,6 @@ import java.util.List;
 public interface ItemRepositoryDb extends JpaRepository<Item, Integer> {
 
     List<Item> findByOwnerOrderByIdAsc(User owner);
+
     List<Item> findByOwner(User owner);
 }

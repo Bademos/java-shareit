@@ -24,7 +24,7 @@ public class BookingController {
     }
 
     @PostMapping
-    BookingDtoOut addBooking( @RequestBody BookingDto bookingDto,
+    BookingDtoOut addBooking(@RequestBody BookingDto bookingDto,
                              @RequestHeader(name = "X-Sharer-User-Id") Integer userId) {
         log.info("Got request for creating booking" + bookingDto);
         return bookingService.createBooking(bookingDto, userId);
