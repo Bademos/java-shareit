@@ -4,21 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.practicum.shareit.booking.BookingController;
-import ru.practicum.shareit.item.ItemController;
-import ru.practicum.shareit.request.ItemRequestController;
-import ru.practicum.shareit.user.UserController;
 
 
 import java.util.Map;
 
 @Slf4j
-@RestControllerAdvice(assignableTypes = {UserController.class,
-        ItemController.class,
-        ItemRequestController.class,
-        BookingController.class})
+@ControllerAdvice
 
 public class ErrorHandler {
 
