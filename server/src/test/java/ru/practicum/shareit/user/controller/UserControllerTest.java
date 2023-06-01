@@ -86,31 +86,7 @@ public class UserControllerTest {
                     .andExpect(jsonPath("$.email", is(userA.getEmail())));
         verify(userService, times(1)).create(any());
     }
-/*
-    @Test
-    void addUserWithoutEmail() throws Exception {
-        UserDto userWithoutEmail = UserDto.builder().name("user").build();
-        mockMvc.perform(post(address)
-                    .content(mapper.writeValueAsString(userWithoutEmail))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andExpect(status().is(400));
 
-        verify(userService, times(0)).create(any());
-    }
-
-    @Test
-    void addUserWithIncorrectEmail() throws Exception {
-        UserDto userWithInvalidMail = UserDto.builder()
-                .email("lib.ru").name("user").build();
-
-        mockMvc.perform(post(address)
-                    .content(mapper.writeValueAsString(userWithInvalidMail))
-                    .contentType(MediaType.APPLICATION_JSON)
-            ).andExpect(status().is(400));
-
-        verify(userService, times(0)).create(any());
-    }
-*/
     @Test
     void updateTest() throws Exception {
         when(userService.update(any())).thenReturn(updateUser);
