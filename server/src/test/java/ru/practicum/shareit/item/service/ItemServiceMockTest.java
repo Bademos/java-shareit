@@ -178,7 +178,7 @@ public class ItemServiceMockTest {
     @Test
     void getAllByUserTest() {
         when(userRepository.findById(any())).thenReturn(Optional.ofNullable(userA));
-        when(itemRepository.findAllByOwner(any())).thenReturn(Collections.singletonList(itemA));
+        when(itemRepository.findByOwnerOrderByIdAsc(any())).thenReturn(Collections.singletonList(itemA));
         List<ItemDto> items = itemService.getAllByUser(itemA.getId());
         assertEquals(items.size(), 1);
         assertEquals(items.get(0).getId(), itemA.getId());

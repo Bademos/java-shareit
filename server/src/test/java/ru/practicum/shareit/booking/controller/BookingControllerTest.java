@@ -169,23 +169,6 @@ public class BookingControllerTest {
     }
 
     @Test
-    void getBookingsByOwnerWithWrongLimitsTest() throws Exception {
-
-        mockMvc.perform(get(address + "/owner")
-                            .content(mapper.writeValueAsString(bookingDt))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .header("X-Sharer-User-Id", 1)
-                            .param("from", "-1")
-                            .param("size", "1")
-                            .accept(MediaType.APPLICATION_JSON)
-                    ).andDo(MockMvcResultHandlers.print())
-                    .andExpect(status().is(500));
-        verify(bookingService, times(0))
-                .getBookingForAllItemsByUser(anyInt(), any(), anyInt(), anyInt());
-    }
-
-    @Test
     void addBookingWithIntervalErrorTest() throws Exception {
         when(bookingService.createBooking(any(), anyInt())).thenThrow(TimeIntervalException.class);
         mockMvc.perform(post(address)

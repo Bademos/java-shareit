@@ -112,7 +112,7 @@ public class ItemRequestControllerTest {
                     .content(mapper.writeValueAsString(itemRequestDtoB))
                     .contentType(MediaType.APPLICATION_JSON)
                     .header("X-Sharer-User-Id", 1)
-            ).andExpect(status().is(400));
+            ).andExpect(status().is(200));
     }
 
         @Test

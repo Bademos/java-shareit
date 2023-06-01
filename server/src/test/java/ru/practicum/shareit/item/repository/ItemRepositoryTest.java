@@ -70,7 +70,7 @@ public class ItemRepositoryTest {
                 .build();
         itemRepository.save(itemA);
         itemRepository.save(itemB);
-        List<Item> res = itemRepository.findAllByOwner(user);
+        List<Item> res = itemRepository.findByOwnerOrderByIdAsc(user);
         assertEquals(2,res.size());
     }
 
@@ -98,12 +98,12 @@ public class ItemRepositoryTest {
                 .build();
         itemRepository.save(itemA);
         itemRepository.save(itemB);
-        List<Item> res = itemRepository.findAllByOwner(user);
+        List<Item> res = itemRepository.findByOwnerOrderByIdAsc(user);
         assertEquals(2,res.size());
 
         itemRepository.delete(itemB);
 
-        res = itemRepository.findAllByOwner(user);
+        res = itemRepository.findByOwnerOrderByIdAsc(user);
         assertEquals(1,res.size());
     }
 }

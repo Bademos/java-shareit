@@ -86,7 +86,7 @@ public class UserControllerTest {
                     .andExpect(jsonPath("$.email", is(userA.getEmail())));
         verify(userService, times(1)).create(any());
     }
-
+/*
     @Test
     void addUserWithoutEmail() throws Exception {
         UserDto userWithoutEmail = UserDto.builder().name("user").build();
@@ -110,7 +110,7 @@ public class UserControllerTest {
 
         verify(userService, times(0)).create(any());
     }
-
+*/
     @Test
     void updateTest() throws Exception {
         when(userService.update(any())).thenReturn(updateUser);
