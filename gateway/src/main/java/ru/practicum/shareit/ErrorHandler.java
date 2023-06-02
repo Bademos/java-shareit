@@ -12,9 +12,7 @@ import java.util.Map;
 
 @Slf4j
 @ControllerAdvice
-
 public class ErrorHandler {
-
     @ExceptionHandler
     public ResponseEntity<Map<String, String>> handleNotAvailableException(final IllegalArgumentException e) {
         log.error("Not availiable exception", e);

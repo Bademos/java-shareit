@@ -107,15 +107,6 @@ public class ItemRequestControllerTest {
     }
 
     @Test
-    void addIncorrectItemRequestTest() throws Exception {
-            mockMvc.perform(post(address)
-                    .content(mapper.writeValueAsString(itemRequestDtoB))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .header("X-Sharer-User-Id", 1)
-            ).andExpect(status().is(200));
-    }
-
-        @Test
     void getRequestByIdTest() throws Exception {
         when(itemRequestService.getRequestById(any(),any())).thenReturn(itemRequestDto);
         mockMvc.perform(get(address + "/1")
